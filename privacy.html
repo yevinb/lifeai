@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy — LifeAI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Outfit:wght@300;400;500;600&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --void:#080a08; --ink:#0e1210; --surface:#131814; --surface-2:#181f19; --surface-3:#1e2820;
+      --border:#243020; --border-2:#1a2218;
+      --gold:#c9a84c; --gold-b:#e8c96a; --gold-d:#8a6e2e; --gold-g:rgba(201,168,76,.10);
+      --em:#4ade80; --danger:#f87171; --info:#93c5fd;
+      --text:#e8ede4; --text-2:#8a9e82; --text-3:#3d5038; --text-4:#253020;
+      --display:'Cormorant Garamond',Georgia,serif;
+      --body:'Outfit',sans-serif; --mono:'Fira Code',monospace;
+      --r:6px; --rm:12px; --rl:18px;
+      --ease:cubic-bezier(.4,0,.2,1);
+    }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:var(--body);background:var(--void);color:var(--text);min-height:100vh;overflow-x:hidden;}
+    body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 40% at 15% 0%,rgba(201,168,76,.06) 0%,transparent 70%),radial-gradient(ellipse 40% 60% at 85% 100%,rgba(74,222,128,.04) 0%,transparent 70%);pointer-events:none;z-index:0;}
+
+    .container{position:relative;z-index:1;max-width:800px;margin:0 auto;padding:0 24px;}
+
+    /* NAVBAR */
+    .navbar{display:flex;align-items:center;justify-content:space-between;padding:20px 0;border-bottom:1px solid var(--border);background:rgba(8,10,8,.88);backdrop-filter:blur(20px);position:sticky;top:0;z-index:100;}
+    .logo{display:flex;align-items:center;gap:13px;text-decoration:none;}
+    .logo-name{font-family:var(--display);font-size:1.4rem;font-weight:400;letter-spacing:.06em;color:var(--text);}
+    .logo-tag{font-size:.68rem;font-family:var(--mono);letter-spacing:.2em;text-transform:uppercase;color:var(--text-3);}
+    .back-btn{display:inline-flex;align-items:center;gap:6px;color:var(--text-2);text-decoration:none;font-size:.85rem;transition:color .2s;border:1px solid var(--border);padding:7px 14px;border-radius:var(--rm);}
+    .back-btn:hover{color:var(--gold);border-color:rgba(201,168,76,.3);}
+
+    /* HERO */
+    .hero{padding:60px 0 40px;}
+    .hero-eye{font-size:.65rem;font-family:var(--mono);letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;}
+    .hero-title{font-family:var(--display);font-size:3rem;font-weight:300;letter-spacing:-.02em;line-height:1.1;margin-bottom:16px;}
+    .hero-title em{font-style:italic;color:var(--gold);}
+    .hero-meta{font-size:.82rem;color:var(--text-3);font-family:var(--mono);}
+
+    /* CONTENT */
+    .content{padding:40px 0 80px;}
+
+    .section{margin-bottom:48px;}
+
+    .section-num{font-family:var(--mono);font-size:.65rem;color:var(--gold);letter-spacing:.15em;margin-bottom:8px;}
+
+    h2{font-family:var(--display);font-size:1.6rem;font-weight:400;color:var(--text);margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border-2);position:relative;}
+    h2::after{content:'';position:absolute;bottom:-1px;left:0;width:40px;height:1px;background:var(--gold);}
+
+    p{color:var(--text-2);font-size:.92rem;line-height:1.8;margin-bottom:14px;}
+    p:last-child{margin-bottom:0;}
+
+    ul{list-style:none;margin:12px 0;display:flex;flex-direction:column;gap:8px;}
+    ul li{color:var(--text-2);font-size:.9rem;line-height:1.7;padding-left:20px;position:relative;}
+    ul li::before{content:'';position:absolute;left:0;top:10px;width:5px;height:1px;background:var(--gold);}
+
+    .highlight{background:var(--surface);border:1px solid var(--border);border-left:2px solid var(--gold);border-radius:0 var(--rm) var(--rm) 0;padding:16px 20px;margin:20px 0;}
+    .highlight p{margin:0;font-size:.88rem;}
+
+    .contact-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:24px;margin-top:20px;}
+    .contact-card h3{font-family:var(--display);font-size:1.2rem;font-weight:400;margin-bottom:12px;color:var(--text);}
+    .contact-card a{color:var(--gold);text-decoration:none;}
+    .contact-card a:hover{text-decoration:underline;}
+
+    /* FOOTER */
+    .footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;color:var(--text-3);font-size:.8rem;}
+    .footer a{color:var(--gold);text-decoration:none;margin:0 8px;}
+    .footer a:hover{text-decoration:underline;}
+
+    @media(max-width:640px){.hero-title{font-size:2.2rem;}}
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="container" style="display:flex;align-items:center;justify-content:space-between;width:100%;max-width:800px;">
+      <a class="logo" href="index.html">
+        <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
+          <path d="M17 2L31 9.5v15L17 32 3 24.5v-15L17 2z" stroke="rgba(201,168,76,.45)" stroke-width="1"/>
+          <circle cx="17" cy="17" r="4" fill="var(--gold)" opacity=".92"/>
+        </svg>
+        <div style="display:flex;flex-direction:column;">
+          <span class="logo-name">LifeAI</span>
+          <span class="logo-tag">Personal Assistant</span>
+        </div>
+      </a>
+      <a class="back-btn" href="index.html">← Back to home</a>
+    </div>
+  </nav>
+
+  <main>
+    <div class="container">
+
+      <!-- HERO -->
+      <div class="hero">
+        <div class="hero-eye">Legal</div>
+        <h1 class="hero-title">Privacy <em>Policy</em></h1>
+        <div class="hero-meta">Last updated: March 2026 · Effective immediately</div>
+      </div>
+
+      <!-- CONTENT -->
+      <div class="content">
+
+        <div class="highlight">
+          <p>Your privacy matters to us. This policy explains what data LifeAI collects, how it is used, and the choices you have. We are committed to being transparent and keeping your data safe.</p>
+        </div>
+
+        <div class="section">
+          <div class="section-num">01</div>
+          <h2>Who we are</h2>
+          <p>LifeAI is a personal productivity assistant that helps you manage tasks, appointments, finances, health goals, and communications — all in one place.</p>
+          <p>For any privacy-related questions, you can contact us at <strong style="color:var(--gold)"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="c5b5b7acb3a4a6bc85a9aca3a0a4aceba4b5b5">[email&#160;protected]</a></strong></p>
+        </div>
+
+        <div class="section">
+          <div class="section-num">02</div>
+          <h2>What data we collect</h2>
+          <p>We collect only the data necessary to provide our service:</p>
+          <ul>
+            <li><strong style="color:var(--text)">Account information</strong> — your name and email address when you sign up</li>
+            <li><strong style="color:var(--text)">Tasks and appointments</strong> — items you create within the app</li>
+            <li><strong style="color:var(--text)">Financial data</strong> — expenses you manually log in the Finance section</li>
+            <li><strong style="color:var(--text)">Health data</strong> — steps, water, sleep, and mindfulness data you log or sync via Google Fit</li>
+            <li><strong style="color:var(--text)">AI chat history</strong> — messages you send to the AI assistant (not stored permanently)</li>
+            <li><strong style="color:var(--text)">Gmail data</strong> — only if you choose to connect your Gmail account (read and send access)</li>
+          </ul>
+        </div>
+
+        <div class="section">
+          <div class="section-num">03</div>
+          <h2>How we use your data</h2>
+          <p>Your data is used solely to power the LifeAI service:</p>
+          <ul>
+            <li>To display your tasks, appointments, finances, and health data on your dashboard</li>
+            <li>To generate AI-powered plans, email drafts, and finance summaries</li>
+            <li>To sync your data across devices via Firebase Firestore</li>
+            <li>To authenticate you securely via Firebase Authentication</li>
+          </ul>
+          <p>We do <strong style="color:var(--text)">not</strong> sell your data, share it with advertisers, or use it for any purpose other than providing the service to you.</p>
+        </div>
+
+        <div class="section">
+          <div class="section-num">04</div>
+          <h2>Third-party services</h2>
+          <p>LifeAI uses the following trusted third-party services:</p>
+          <ul>
+            <li><strong style="color:var(--text)">Firebase (Google)</strong> — authentication and database storage. <a href="https://firebase.google.com/support/privacy" target="_blank" style="color:var(--gold)">Firebase Privacy Policy</a></li>
+            <li><strong style="color:var(--text)">Groq AI</strong> — powers the AI chat, email drafting, and day planning features. Messages are processed by Groq but not stored permanently.</li>
+            <li><strong style="color:var(--text)">Gmail API (Google)</strong> — only accessed if you explicitly connect your Gmail account. We only read and send emails on your behalf.</li>
+            <li><strong style="color:var(--text)">Google Fit API</strong> — only accessed if you explicitly connect Google Fit to sync your step count.</li>
+          </ul>
+        </div>
+
+        <div class="section">
+          <div class="section-num">05</div>
+          <h2>Data storage & security</h2>
+          <p>Your data is stored securely in Google Firebase Firestore, protected by Firebase's industry-standard security rules. Only you can access your own data — each user's data is isolated by their unique user ID.</p>
+          <p>We use HTTPS for all data transmission and Firebase Authentication for secure login. We do not store passwords — authentication is handled entirely by Firebase and Google.</p>
+        </div>
+
+        <div class="section">
+          <div class="section-num">06</div>
+          <h2>Gmail & Google Fit access</h2>
+          <p>If you choose to connect your Gmail or Google Fit account:</p>
+          <ul>
+            <li>Gmail access is used only to read your inbox and send emails on your behalf</li>
+            <li>Google Fit access is used only to read your step count for the Health dashboard</li>
+            <li>You can revoke access at any time via your <a href="https://myaccount.google.com/permissions" target="_blank" style="color:var(--gold)">Google Account permissions</a></li>
+            <li>We do not store your Gmail or Google Fit tokens permanently — they are held in server memory only</li>
+          </ul>
+        </div>
+
+        <div class="section">
+          <div class="section-num">07</div>
+          <h2>Your rights</h2>
+          <p>You have full control over your data:</p>
+          <ul>
+            <li><strong style="color:var(--text)">Access</strong> — you can view all your data directly in the app</li>
+            <li><strong style="color:var(--text)">Delete</strong> — you can delete your account and all associated data at any time by contacting us</li>
+            <li><strong style="color:var(--text)">Export</strong> — contact us to request a copy of your data</li>
+            <li><strong style="color:var(--text)">Revoke access</strong> — disconnect Gmail or Google Fit at any time via Google Account settings</li>
+          </ul>
+        </div>
+
+        <div class="section">
+          <div class="section-num">08</div>
+          <h2>Cookies</h2>
+          <p>LifeAI uses minimal cookies and browser storage (localStorage) only for maintaining your login session. We do not use tracking cookies or advertising cookies.</p>
+        </div>
+
+        <div class="section">
+          <div class="section-num">09</div>
+          <h2>Children's privacy</h2>
+          <p>LifeAI is not intended for use by children under the age of 13. We do not knowingly collect personal information from children. If you believe a child has provided us with personal information, please contact us and we will delete it promptly.</p>
+        </div>
+
+        <div class="section">
+          <div class="section-num">10</div>
+          <h2>Changes to this policy</h2>
+          <p>We may update this privacy policy from time to time. When we do, we will update the "Last updated" date at the top of this page. We encourage you to review this policy periodically.</p>
+        </div>
+
+        <div class="section">
+          <div class="section-num">11</div>
+          <h2>Contact us</h2>
+          <p>If you have any questions about this privacy policy or how we handle your data, please get in touch:</p>
+          <div class="contact-card">
+            <h3>LifeAI Privacy Team</h3>
+            <p style="margin-bottom:6px;">Email: <a href="/cdn-cgi/l/email-protection#08787a617e696b714864616e6d696126697878"><span class="__cf_email__" data-cfemail="58282a312e393b211834313e3d393176392828">[email&#160;protected]</span></a></p>
+            <p style="margin:0;font-size:.82rem;color:var(--text-3);">We aim to respond to all privacy inquiries within 48 hours.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
