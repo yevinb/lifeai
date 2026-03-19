@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LifeAI — Your Intelligent Personal Assistant</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Outfit:wght@300;400;500;600&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --void:#080a08; --ink:#0e1210; --surface:#131814; --surface-2:#181f19; --surface-3:#1e2820;
+      --border:#243020; --border-2:#1a2218;
+      --gold:#c9a84c; --gold-b:#e8c96a; --gold-d:#8a6e2e; --gold-g:rgba(201,168,76,.10);
+      --em:#4ade80; --danger:#f87171; --info:#93c5fd;
+      --text:#e8ede4; --text-2:#8a9e82; --text-3:#3d5038; --text-4:#253020;
+      --display:'Cormorant Garamond',Georgia,serif;
+      --body:'Outfit',sans-serif; --mono:'Fira Code',monospace;
+      --r:6px; --rm:12px; --rl:18px;
+      --ease:cubic-bezier(.4,0,.2,1);
+    }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:var(--body);background:var(--void);color:var(--text);min-height:100vh;position:relative;overflow-x:hidden;}
+    body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 40% at 15% 0%,rgba(201,168,76,.06) 0%,transparent 70%),radial-gradient(ellipse 40% 60% at 85% 100%,rgba(74,222,128,.04) 0%,transparent 70%);pointer-events:none;z-index:0;}
+    .container{position:relative;z-index:1;max-width:1280px;margin:0 auto;padding:0 24px;}
+    .navbar{display:flex;align-items:center;justify-content:space-between;padding:20px 0;border-bottom:1px solid var(--border);background:rgba(8,10,8,.88);backdrop-filter:blur(20px);position:sticky;top:0;z-index:100;}
+    .logo{display:flex;align-items:center;gap:13px;}
+    .logo-svg{width:40px;height:40px;}
+    .logo-text{display:flex;flex-direction:column;}
+    .logo-name{font-family:var(--display);font-size:1.4rem;font-weight:400;letter-spacing:.06em;color:var(--text);}
+    .logo-tag{font-size:.68rem;font-family:var(--mono);letter-spacing:.2em;text-transform:uppercase;color:var(--text-3);}
+    .nav-links{display:flex;align-items:center;gap:32px;}
+    .nav-links a{color:var(--text-2);text-decoration:none;font-size:.9rem;transition:color .2s;}
+    .nav-links a:hover{color:var(--gold);}
+    .auth-buttons{display:flex;align-items:center;gap:12px;}
+    .btn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:var(--rm);font-family:var(--body);font-size:.85rem;font-weight:500;cursor:pointer;transition:all .17s var(--ease);border:1px solid transparent;}
+    .btn-gold{background:linear-gradient(135deg,var(--gold-d),var(--gold));color:var(--void);box-shadow:0 2px 10px rgba(201,168,76,.18);}
+    .btn-gold:hover{background:linear-gradient(135deg,var(--gold),var(--gold-b));transform:translateY(-1px);}
+    .btn-gold:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+    .btn-out{background:transparent;color:var(--text-2);border-color:var(--border);}
+    .btn-out:hover{background:var(--surface-2);color:var(--text);}
+    .hero{display:grid;grid-template-columns:1fr 1fr;gap:60px;padding:80px 0;align-items:center;}
+    .hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;background:var(--surface);border:1px solid var(--border);border-radius:999px;font-size:.75rem;font-family:var(--mono);color:var(--gold);margin-bottom:24px;}
+    .pip{width:6px;height:6px;border-radius:50%;background:var(--em);box-shadow:0 0 8px var(--em);animation:breathe 3s ease-in-out infinite;}
+    .pip.gold{background:var(--gold);box-shadow:0 0 8px var(--gold);}
+    @keyframes breathe{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.5;transform:scale(.7);}}
+    .hero-title{font-family:var(--display);font-size:3.8rem;font-weight:300;letter-spacing:-.02em;line-height:1.1;margin-bottom:24px;}
+    .hero-title em{font-style:italic;color:var(--gold);}
+    .hero-subtitle{font-size:1.1rem;color:var(--text-2);margin-bottom:32px;max-width:500px;}
+    .hero-stats{display:flex;gap:32px;margin-top:40px;}
+    .stat-item{display:flex;flex-direction:column;}
+    .stat-number{font-family:var(--mono);font-size:1.8rem;font-weight:500;color:var(--gold);}
+    .stat-label{font-size:.8rem;color:var(--text-3);font-family:var(--mono);}
+    .hero-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:32px;position:relative;overflow:hidden;}
+    .hero-card::before{content:'';position:absolute;top:0;right:0;width:120px;height:120px;background:radial-gradient(circle at top right,rgba(201,168,76,.1),transparent 70%);}
+    .mini-dashboard{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:20px;}
+    .mini-card{background:var(--surface-2);border:1px solid var(--border-2);border-radius:var(--rm);padding:16px;}
+    .mini-card .label{font-size:.7rem;color:var(--text-3);font-family:var(--mono);margin-bottom:8px;}
+    .mini-card .value{font-size:1.2rem;font-weight:500;color:var(--text);}
+    .progress-bar{height:4px;background:var(--border);border-radius:2px;margin-top:10px;overflow:hidden;}
+    .progress-fill{height:100%;background:var(--gold);border-radius:2px;}
+    .section-title{text-align:center;font-family:var(--display);font-size:2.8rem;font-weight:300;margin-bottom:60px;}
+    .section-title em{font-style:italic;color:var(--gold);}
+    .features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-bottom:80px;}
+    .feature-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:32px 24px;transition:all .2s var(--ease);}
+    .feature-card:hover{border-color:rgba(201,168,76,.2);transform:translateY(-4px);box-shadow:0 20px 40px rgba(0,0,0,.5);}
+    .feature-icon{width:48px;height:48px;margin-bottom:24px;color:var(--gold);}
+    .feature-title{font-size:1.3rem;font-weight:500;margin-bottom:12px;}
+    .feature-desc{color:var(--text-2);font-size:.9rem;line-height:1.6;}
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(8,10,8,.95);backdrop-filter:blur(10px);z-index:1000;align-items:center;justify-content:center;}
+    .modal-overlay.active{display:flex;}
+    .modal{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);width:90%;max-width:440px;padding:40px;position:relative;}
+    .modal-close{position:absolute;top:20px;right:20px;background:none;border:none;color:var(--text-3);font-size:1.5rem;cursor:pointer;}
+    .modal-close:hover{color:var(--gold);}
+    .modal-header{text-align:center;margin-bottom:28px;}
+    .modal-title{font-family:var(--display);font-size:2rem;font-weight:300;margin-bottom:6px;}
+    .modal-title em{font-style:italic;color:var(--gold);}
+    .modal-subtitle{font-size:.85rem;color:var(--text-2);}
+    .form-group{margin-bottom:16px;}
+    .form-group label{display:block;font-size:.75rem;font-family:var(--mono);text-transform:uppercase;color:var(--text-3);margin-bottom:6px;}
+    .form-group input{width:100%;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--rm);color:var(--text);padding:12px 16px;font-size:.9rem;outline:none;font-family:var(--body);transition:border-color .15s;}
+    .form-group input:focus{border-color:rgba(201,168,76,.38);background:var(--surface-3);}
+    .form-group input::placeholder{color:var(--text-4);}
+    .modal-footer{text-align:center;margin-top:20px;padding-top:20px;border-top:1px solid var(--border);color:var(--text-2);font-size:.85rem;}
+    .modal-footer a{color:var(--gold);text-decoration:none;cursor:pointer;}
+    .auth-msg{display:none;border-radius:var(--rm);padding:10px 14px;font-size:.82rem;margin-bottom:14px;}
+    .auth-msg.error{background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.25);color:var(--danger);}
+    .auth-msg.success{background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.2);color:var(--em);}
+    .auth-msg.show{display:block;}
+    .or-divider{display:flex;align-items:center;gap:10px;margin:16px 0;color:var(--text-3);font-size:.75rem;font-family:var(--mono);}
+    .or-divider::before,.or-divider::after{content:'';flex:1;height:1px;background:var(--border);}
+    .btn-google{width:100%;padding:10px;background:#fff;border:1px solid #dadce0;border-radius:var(--rm);font-family:var(--body);font-size:.88rem;font-weight:500;color:#3c4043;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:all .17s;}
+    .btn-google:hover{background:#f8f9fa;box-shadow:0 1px 6px rgba(0,0,0,.1);}
+    .forgot-link{display:block;text-align:right;font-size:.78rem;color:var(--text-3);cursor:pointer;margin-top:-8px;margin-bottom:14px;}
+    .forgot-link:hover{color:var(--gold);}
+    .loading-screen{display:none;position:fixed;inset:0;background:var(--void);z-index:2000;align-items:center;justify-content:center;flex-direction:column;gap:24px;}
+    .loading-screen.active{display:flex;}
+    .spinner{width:48px;height:48px;border:2px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin 1s linear infinite;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+    .footer{border-top:1px solid var(--border);padding:40px 0;margin-top:60px;text-align:center;color:var(--text-3);}
+    @media(max-width:1024px){.hero-title{font-size:3rem;}.features-grid{grid-template-columns:repeat(2,1fr);}}
+    @media(max-width:768px){.hero{grid-template-columns:1fr;text-align:center;}.hero-subtitle{margin-left:auto;margin-right:auto;}.hero-stats{justify-content:center;}.nav-links{display:none;}.features-grid{grid-template-columns:1fr;}}
+  </style>
+</head>
+<body>
+
+  <div class="loading-screen" id="loading">
+    <div class="spinner"></div>
+    <div style="color:var(--gold);font-family:var(--mono);">Loading LifeAI...</div>
+  </div>
+
+  <!-- MODAL -->
+  <div class="modal-overlay" id="loginModal">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal()">×</button>
+      <div class="modal-header">
+        <div class="modal-title">Welcome <em>back</em></div>
+        <div class="modal-subtitle" id="modal-subtitle">Sign in to your LifeAI command centre</div>
+      </div>
+
+      <!-- LOGIN -->
+      <div id="loginForm">
+        <div class="auth-msg error" id="login-error"></div>
+        <div class="form-group"><label>Email</label><input type="email" id="loginEmail" placeholder="your@email.com"></div>
+        <div class="form-group"><label>Password</label><input type="password" id="loginPassword" placeholder="••••••••" onkeydown="if(event.key==='Enter')handleLogin()"></div>
+        <a class="forgot-link" onclick="showForgot()">Forgot password?</a>
+        <button class="btn btn-gold" style="width:100%;justify-content:center;" id="btn-signin" onclick="handleLogin()">Sign In</button>
+        <div class="or-divider">or</div>
+        <button class="btn-google" onclick="handleGoogleSignIn()"><svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>Continue with Google</button>
+        <div class="modal-footer">Don't have an account? <a onclick="switchToSignup()">Create one</a></div>
+      </div>
+
+      <!-- SIGNUP -->
+      <div id="signupForm" style="display:none;">
+        <div class="auth-msg error" id="signup-error"></div>
+        <div class="form-group"><label>Full Name</label><input type="text" id="signupName" placeholder="John Doe"></div>
+        <div class="form-group"><label>Email</label><input type="email" id="signupEmail" placeholder="your@email.com"></div>
+        <div class="form-group"><label>Password</label><input type="password" id="signupPassword" placeholder="At least 6 characters"></div>
+        <div class="form-group"><label>Confirm Password</label><input type="password" id="signupConfirm" placeholder="••••••••" onkeydown="if(event.key==='Enter')handleSignup()"></div>
+        <button class="btn btn-gold" style="width:100%;justify-content:center;" id="btn-signup" onclick="handleSignup()">Create Account</button>
+        <div class="or-divider">or</div>
+        <button class="btn-google" onclick="handleGoogleSignIn()"><svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>Sign up with Google</button>
+        <div class="modal-footer">Already have an account? <a onclick="switchToLogin()">Sign in</a></div>
+      </div>
+
+      <!-- FORGOT PASSWORD -->
+      <div id="forgotForm" style="display:none;">
+        <div class="auth-msg error" id="forgot-error"></div>
+        <div class="auth-msg success" id="forgot-success"></div>
+        <div class="form-group"><label>Email</label><input type="email" id="forgotEmail" placeholder="your@email.com"></div>
+        <button class="btn btn-gold" style="width:100%;justify-content:center;" onclick="sendReset()">Send Reset Email</button>
+        <div class="modal-footer"><a onclick="switchToLogin()">← Back to sign in</a></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="container" style="display:flex;align-items:center;justify-content:space-between;width:100%;">
+      <div class="logo">
+        <svg class="logo-svg" viewBox="0 0 34 34" fill="none">
+          <path d="M17 2L31 9.5v15L17 32 3 24.5v-15L17 2z" stroke="rgba(201,168,76,.45)" stroke-width="1"/>
+          <circle cx="17" cy="17" r="4" fill="var(--gold)" opacity=".92"/>
+        </svg>
+        <div class="logo-text"><span class="logo-name">LifeAI</span><span class="logo-tag">Personal Assistant</span></div>
+      </div>
+      <div class="nav-links"><a href="#">Home</a><a href="#">Features</a><a href="about.html">About</a></div>
+      <div class="auth-buttons">
+        <button class="btn btn-out" onclick="openModal();switchToLogin()">Log in</button>
+        <button class="btn btn-gold" onclick="openModal();switchToSignup()">Sign up</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container">
+    <section class="hero">
+      <div>
+        <div class="hero-badge"><div class="pip gold"></div><span>AI-POWERED · FREE FOREVER</span></div>
+        <h1 class="hero-title">Your intelligent <em>assistant</em> for a better life</h1>
+        <p class="hero-subtitle">Plan your day, manage tasks, track finances, monitor health, and chat with AI - all in one place.</p>
+        <div style="display:flex;gap:16px;">
+          <button class="btn btn-gold" onclick="openModal();switchToSignup()">Get Started Free</button>
+          <button class="btn btn-out">Learn More</button>
+        </div>
+        <div class="hero-stats">
+          <div class="stat-item"><span class="stat-number">10K+</span><span class="stat-label">Active Users</span></div>
+          <div class="stat-item"><span class="stat-number">99.9%</span><span class="stat-label">Uptime</span></div>
+          <div class="stat-item"><span class="stat-number">24/7</span><span class="stat-label">AI Support</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="hero-card">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px;"><div class="pip" style="background:var(--gold);"></div><span style="font-family:var(--mono);font-size:.7rem;color:var(--text-3);">LIVE PREVIEW</span></div>
+          <div class="mini-dashboard">
+            <div class="mini-card"><div class="label">TASKS TODAY</div><div class="value">4 pending</div><div class="progress-bar"><div class="progress-fill" style="width:25%;"></div></div></div>
+            <div class="mini-card"><div class="label">STEPS</div><div class="value">6,240</div><div class="progress-bar"><div class="progress-fill" style="width:62%;"></div></div></div>
+            <div class="mini-card"><div class="label">WATER</div><div class="value">1.4L</div><div class="progress-bar"><div class="progress-fill" style="width:70%;background:var(--info);"></div></div></div>
+            <div class="mini-card"><div class="label">SAVINGS</div><div class="value">23%</div><div class="progress-bar"><div class="progress-fill" style="width:23%;background:var(--em);"></div></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <h2 class="section-title">Everything you need, <em>intelligently</em></h2>
+    <div class="features-grid">
+      <div class="feature-card"><svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="3" stroke-width="1.5"/><path d="M9 12l2 2 4-4" stroke-width="1.5" stroke-linecap="round"/></svg><h3 class="feature-title">Smart Task Management</h3><p class="feature-desc">Prioritize and organize tasks with AI that learns your patterns.</p></div>
+      <div class="feature-card"><svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="16" rx="2" stroke-width="1.5"/><path d="M2 7l10 7 10-7" stroke-width="1.5"/></svg><h3 class="feature-title">AI Email Drafting</h3><p class="feature-desc">Generate professional emails in seconds with AI assistance.</p></div>
+      <div class="feature-card"><svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M18 20V10M12 20V4M6 20v-6" stroke-width="1.5" stroke-linecap="round"/></svg><h3 class="feature-title">Financial Intelligence</h3><p class="feature-desc">Track expenses and get personalized saving recommendations.</p></div>
+      <div class="feature-card"><svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" stroke-width="1.5"/></svg><h3 class="feature-title">Health & Wellness</h3><p class="feature-desc">Monitor steps, water, sleep with AI-powered health insights.</p></div>
+      <div class="feature-card"><svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="2" stroke-width="1.5"/><path d="M16 2v4M8 2v4M3 10h18" stroke-width="1.5"/></svg><h3 class="feature-title">Intelligent Calendar</h3><p class="feature-desc">Schedule appointments and let AI optimize your daily agenda.</p></div>
+      <div class="feature-card"><svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke-width="1.5"/></svg><h3 class="feature-title">AI Conversation</h3><p class="feature-desc">Chat with your personal AI assistant about anything.</p></div>
+    </div>
+  </main>
+
+  <footer class="footer"><div class="container">© 2024 LifeAI. All rights reserved. · <a href="about.html" style="color:var(--gold);text-decoration:none;">About</a> · <a href="privacy.html" style="color:var(--gold);text-decoration:none;">Privacy Policy</a></div></footer>
+
+  <!-- FIREBASE AUTH -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, sendPasswordResetEmail, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyA_2Lh01cJbkoCCr2XbpFYC-rHIiq6PmNQ",
+      authDomain: "ai-life-assistant-c9b14.firebaseapp.com",
+      projectId: "ai-life-assistant-c9b14",
+      storageBucket: "ai-life-assistant-c9b14.firebasestorage.app",
+      messagingSenderId: "231851528102",
+      appId: "1:231851528102:web:9179548ec72a84548ec967"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const googleProvider = new GoogleAuthProvider();
+
+    // Already logged in → go to dashboard
+    onAuthStateChanged(auth, user => {
+      if (user) {
+        window.location.href = 'dashboard.html';
+      }
+    });
+
+    function msg(id, text, type) {
+      const el = document.getElementById(id);
+      el.textContent = text;
+      el.className = 'auth-msg ' + type + ' show';
+    }
+    function clearMsg(id) { document.getElementById(id).className = 'auth-msg'; }
+
+    function friendly(code) {
+      return ({
+        'auth/invalid-email': "That email doesn't look right.",
+        'auth/user-not-found': 'No account found with that email.',
+        'auth/wrong-password': 'Incorrect password — try again.',
+        'auth/invalid-credential': 'Incorrect email or password.',
+        'auth/email-already-in-use': 'An account with this email already exists.',
+        'auth/weak-password': 'Password must be at least 6 characters.',
+        'auth/too-many-requests': 'Too many attempts — please wait.',
+        'auth/popup-closed-by-user': 'Google sign-in was cancelled.',
+        'auth/network-request-failed': 'Network error — check your connection.',
+      })[code] || 'Something went wrong. Please try again.';
+    }
+
+    function goToDashboard(user, name) {
+      localStorage.setItem('lifeai_user', JSON.stringify({
+        fullName: name || user.displayName || user.email,
+        email: user.email,
+        uid: user.uid
+      }));
+      document.getElementById('loading').classList.add('active');
+      window.location.href = 'dashboard.html';
+    }
+
+    window.handleLogin = async () => {
+      clearMsg('login-error');
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      if (!email || !password) { msg('login-error', 'Please fill in all fields.', 'error'); return; }
+      const btn = document.getElementById('btn-signin');
+      btn.disabled = true; btn.textContent = 'Signing in…';
+      try {
+        const { user } = await signInWithEmailAndPassword(auth, email, password);
+        goToDashboard(user);
+      } catch (e) {
+        msg('login-error', friendly(e.code), 'error');
+        btn.disabled = false; btn.textContent = 'Sign In';
+      }
+    };
+
+    window.handleSignup = async () => {
+      clearMsg('signup-error');
+      const name = document.getElementById('signupName').value.trim();
+      const email = document.getElementById('signupEmail').value.trim();
+      const password = document.getElementById('signupPassword').value;
+      const confirm = document.getElementById('signupConfirm').value;
+      if (!name || !email || !password || !confirm) { msg('signup-error', 'Please fill in all fields.', 'error'); return; }
+      if (password !== confirm) { msg('signup-error', 'Passwords do not match.', 'error'); return; }
+      const btn = document.getElementById('btn-signup');
+      btn.disabled = true; btn.textContent = 'Creating account…';
+      try {
+        const { user } = await createUserWithEmailAndPassword(auth, email, password);
+        await updateProfile(user, { displayName: name });
+        goToDashboard(user, name);
+      } catch (e) {
+        msg('signup-error', friendly(e.code), 'error');
+        btn.disabled = false; btn.textContent = 'Create Account';
+      }
+    };
+
+    window.handleGoogleSignIn = async () => {
+      try {
+        const { user } = await signInWithPopup(auth, googleProvider);
+        goToDashboard(user);
+      } catch (e) {
+        const errId = document.getElementById('signupForm').style.display !== 'none' ? 'signup-error' : 'login-error';
+        msg(errId, friendly(e.code), 'error');
+      }
+    };
+
+    window.sendReset = async () => {
+      clearMsg('forgot-error');
+      document.getElementById('forgot-success').className = 'auth-msg';
+      const email = document.getElementById('forgotEmail').value.trim();
+      if (!email) { msg('forgot-error', 'Please enter your email.', 'error'); return; }
+      try {
+        await sendPasswordResetEmail(auth, email);
+        msg('forgot-success', 'Reset email sent — check your inbox.', 'success');
+      } catch (e) {
+        msg('forgot-error', friendly(e.code), 'error');
+      }
+    };
+  </script>
+
+  <script>
+    function openModal() { document.getElementById('loginModal').classList.add('active'); }
+    function closeModal() { document.getElementById('loginModal').classList.remove('active'); }
+    function switchToLogin() {
+      document.getElementById('signupForm').style.display = 'none';
+      document.getElementById('forgotForm').style.display = 'none';
+      document.getElementById('loginForm').style.display = 'block';
+      document.getElementById('modal-subtitle').textContent = 'Sign in to your LifeAI command centre';
+    }
+    function switchToSignup() {
+      document.getElementById('loginForm').style.display = 'none';
+      document.getElementById('forgotForm').style.display = 'none';
+      document.getElementById('signupForm').style.display = 'block';
+      document.getElementById('modal-subtitle').textContent = 'Create your free account';
+    }
+    function showForgot() {
+      document.getElementById('loginForm').style.display = 'none';
+      document.getElementById('signupForm').style.display = 'none';
+      document.getElementById('forgotForm').style.display = 'block';
+      document.getElementById('modal-subtitle').textContent = 'Reset your password';
+    }
+    window.onclick = e => { if (e.target.classList.contains('modal-overlay')) closeModal(); };
+  </script>
+</body>
+</html>
