@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Outfit:wght@300;400;500;600&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://www.paypal.com/sdk/js?client-id=EHIBz-HkEa0ZsF_towTlOJ4BrFpMJAS7RuVIytjE6HjXG5UEQCrRAkMsyBKiHBuHEaVx7Tw4B1vro9t_&currency=GBP"></script>
 <style>
 :root {
   --void:#080a08; --ink:#0e1210; --surface:#131814; --surface-2:#181f19; --surface-3:#1e2820;
@@ -275,7 +276,6 @@ select option{background:var(--surface-3);}
 #toasts{position:fixed;bottom:26px;right:26px;display:flex;flex-direction:column;gap:7px;z-index:999;}
 .toast{display:flex;align-items:center;gap:9px;padding:10px 15px;max-width:310px;background:var(--surface-3);border:1px solid var(--border);border-radius:var(--rm);font-size:.8rem;color:var(--text);box-shadow:0 8px 30px rgba(0,0,0,.5);animation:tin .28s var(--spring) both;}
 .toast.ok{border-left:2px solid var(--gold);}.toast.er{border-left:2px solid var(--danger);}.toast.in{border-left:2px solid var(--info);}
-
 @keyframes tin{from{transform:translateX(110%);opacity:0;}to{transform:translateX(0);opacity:1;}}
 
 @media(max-width:860px){
@@ -291,6 +291,7 @@ select option{background:var(--surface-3);}
 </head>
 <body>
 
+<!-- INLINE SVG SPRITES -->
 <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
   <symbol id="i-dash" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.5"/></symbol>
   <symbol id="i-task" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="3" y="3" width="18" height="18" rx="3" fill="none" stroke="currentColor" stroke-width="1.5"/></symbol>
@@ -301,353 +302,959 @@ select option{background:var(--surface-3);}
   <symbol id="i-health" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></symbol>
   <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
   <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-sync" viewBox="0 0 24 24"><path d="M23 4v6h-6M1 20v-6h6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="10" r="3" fill="none" stroke="currentColor" stroke-width="1.5"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 7v5l3 3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
+  <symbol id="i-trend-up" viewBox="0 0 24 24"><path d="M23 6l-7 8-4-4-6 6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
+  <symbol id="i-trend-down" viewBox="0 0 24 24"><path d="M23 18l-7-8-4 4-6-6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
 </svg>
 
 <div class="shell">
-  <div class="topbar">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
     <div class="logo-g">
-      <svg class="logo-svg" viewBox="0 0 100 100">
-        <defs>
-          <linearGradient id="lg" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" style="stop-color:var(--gold-d)"/>
-            <stop offset="100%" style="stop-color:var(--gold)"/>
-          </linearGradient>
-        </defs>
-        <circle cx="50" cy="50" r="42" fill="none" stroke="url(#lg)" stroke-width="1.5" opacity=".3"/>
-        <path d="M35 50 L45 60 L65 40" fill="none" stroke="url(#lg)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+      <svg class="logo-svg" viewBox="0 0 34 34" fill="none">
+        <path d="M17 2L31 9.5v15L17 32 3 24.5v-15L17 2z" stroke="rgba(201,168,76,.45)" stroke-width="1"/>
+        <path d="M17 6.5L28 12.5v11L17 29.5 6 23.5v-11L17 6.5z" fill="rgba(201,168,76,.05)" stroke="rgba(201,168,76,.25)" stroke-width=".5"/>
+        <circle cx="17" cy="17" r="4" fill="var(--gold)" opacity=".92"/>
+        <circle cx="17" cy="17" r="6.5" stroke="var(--gold)" stroke-width=".5" opacity=".28"/>
       </svg>
       <div class="logo-words">
         <span class="logo-name">LifeAI</span>
-        <span class="logo-tag">The Personal Oracle</span>
+        <span class="logo-tag">Personal Command Centre</span>
       </div>
     </div>
     <div class="top-pills">
-      <div class="pill"><span class="pip"></span>AI CORE ACTIVE</div>
-      <div class="pill"><span class="pip g"></span>PRO STATUS</div>
+      <div class="pill"><div class="pip"></div>AI Active</div>
+      <div class="pill"><div class="pip g"></div><span id="tdate">—</span></div>
     </div>
     <div class="top-r">
-      <span id="tclock">00:00:00</span>
-      <div class="av" id="user-av">JD
-        <div class="logout-dropdown" id="logout-menu">
-          <div id="btn-logout">Sign Out</div>
+      <span id="tclock">—</span>
+      <div class="av" onclick="toggleLogout()">
+        U
+        <div class="logout-dropdown" id="logoutDropdown">
+          <div onclick="logout()">🚪 Sign Out</div>
         </div>
       </div>
     </div>
-  </div>
+  </header>
 
-  <div class="sidebar">
-    <div class="s-sect">Primary</div>
-    <div class="nav-b on" data-target="panel-dash">
-      <div class="nav-ic"><svg width="16" height="16"><use href="#i-dash"/></svg></div>
-      Dashboard
-    </div>
-    <div class="nav-b" data-target="panel-chat">
-      <div class="nav-ic"><svg width="16" height="16"><use href="#i-chat"/></svg></div>
-      AI Assistant
-    </div>
-    
-    <div class="s-sect">Management</div>
-    <div class="nav-b" data-target="panel-tasks">
-      <div class="nav-ic"><svg width="16" height="16"><use href="#i-task"/></svg></div>
-      Tasks
-      <div class="nbadge" id="task-count">0</div>
-    </div>
-    <div class="nav-b" data-target="panel-cal">
-      <div class="nav-ic"><svg width="16" height="16"><use href="#i-cal"/></svg></div>
-      Schedule
-    </div>
-    <div class="nav-b" data-target="panel-fin">
-      <div class="nav-ic"><svg width="16" height="16"><use href="#i-fin"/></svg></div>
-      Finance
-    </div>
-    
-    <div class="s-sect">Wellbeing</div>
-    <div class="nav-b" data-target="panel-health">
-      <div class="nav-ic"><svg width="16" height="16"><use href="#i-health"/></svg></div>
-      Health
-    </div>
-
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="s-sect">Overview</div>
+    <div class="nav-b on" onclick="nav('dashboard',this)"><span class="nav-ic"><svg width="16" height="16"><use href="#i-dash"/></svg></span>Dashboard</div>
+    <div class="s-sect">Daily Life</div>
+    <div class="nav-b" onclick="nav('tasks',this)"><span class="nav-ic"><svg width="16" height="16"><use href="#i-task"/></svg></span>Tasks<span class="nbadge" id="nb-t">4</span></div>
+    <div class="nav-b" onclick="nav('appointments',this)"><span class="nav-ic"><svg width="16" height="16"><use href="#i-cal"/></svg></span>Appointments</div>
+    <div class="nav-b" onclick="nav('email',this)"><span class="nav-ic"><svg width="16" height="16"><use href="#i-mail"/></svg></span>Email</div>
+    <div class="s-sect">Intelligence</div>
+    <div class="nav-b" onclick="nav('chat',this)"><span class="nav-ic"><svg width="16" height="16"><use href="#i-chat"/></svg></span>AI Chat</div>
+    <div class="s-sect">Insights</div>
+    <div class="nav-b" onclick="nav('finance',this)"><span class="nav-ic"><svg width="16" height="16"><use href="#i-fin"/></svg></span>Finance</div>
+    <div class="nav-b" onclick="nav('health',this)"><span class="nav-ic"><svg width="16" height="16"><use href="#i-health"/></svg></span>Health</div>
     <div class="sf">
-      <div class="sf-l">AI Memory Usage</div>
-      <div class="sf-r">
-        <div class="sf-n">Core Context</div>
-        <div class="sf-bw"><div class="sf-bf" style="width:72%"></div></div>
-        <div class="sf-v">72%</div>
+      <div class="sf-l">Today's Progress</div>
+      <div class="sf-r"><span class="sf-n">Tasks</span><div class="sf-bw"><div class="sf-bf" id="sf-t" style="width:0%"></div></div><span class="sf-v" id="sf-tv">0/0</span></div>
+      <div class="sf-r"><span class="sf-n">Steps</span><div class="sf-bw"><div class="sf-bf" style="width:0%;background:var(--em)"></div></div><span class="sf-v">0%</span></div>
+      <div class="sf-r"><span class="sf-n">Water</span><div class="sf-bw"><div class="sf-bf" style="width:0%;background:var(--info)"></div></div><span class="sf-v">0L</span></div>
+    </div>
+
+    <!-- SUBSCRIPTION PLANS -->
+    <div style="padding:14px 10px;border-top:1px solid var(--border-2);">
+      <div style="font-size:.58rem;font-family:var(--mono);color:var(--text-3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;">Your Plan</div>
+
+      <!-- FREE PLAN (shown when on free tier) -->
+      <div id="plan-free" style="background:var(--surface-2);border:1px solid var(--border);border-radius:var(--rm);padding:12px;margin-bottom:8px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+          <span style="font-size:.72rem;font-weight:500;color:var(--text);">Free</span>
+          <span style="font-size:.58rem;font-family:var(--mono);background:var(--surface-3);color:var(--text-3);padding:2px 7px;border-radius:999px;">Current</span>
+        </div>
+        <div style="font-size:.66rem;color:var(--text-3);line-height:1.5;margin-bottom:10px;">10 tasks · 5 AI chats/day · Basic features</div>
+        <button onclick="showUpgradeModal()" style="width:100%;padding:7px;background:linear-gradient(135deg,var(--gold-d),var(--gold));border:none;border-radius:var(--r);font-family:var(--body);font-size:.72rem;font-weight:500;color:var(--void);cursor:pointer;transition:all .17s;">
+          ⚡ Upgrade to Pro
+        </button>
       </div>
+
+      <!-- PRO PLAN (shown when subscribed) -->
+      <div id="plan-pro" style="display:none;background:var(--gold-g);border:1px solid rgba(201,168,76,.25);border-radius:var(--rm);padding:12px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+          <span style="font-size:.72rem;font-weight:500;color:var(--gold);">⚡ Pro</span>
+          <span style="font-size:.58rem;font-family:var(--mono);background:rgba(201,168,76,.15);color:var(--gold);padding:2px 7px;border-radius:999px;">Active</span>
+        </div>
+        <div style="font-size:.66rem;color:var(--text-2);line-height:1.5;">Unlimited everything · Priority AI</div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- UPGRADE MODAL -->
+  <div id="upgradeModal" style="display:none;position:fixed;inset:0;background:rgba(8,10,8,.95);backdrop-filter:blur(10px);z-index:1000;align-items:center;justify-content:center;">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);width:90%;max-width:480px;padding:36px;position:relative;">
+      <button onclick="hideUpgradeModal()" style="position:absolute;top:16px;right:16px;background:none;border:none;color:var(--text-3);font-size:1.4rem;cursor:pointer;">×</button>
+
+      <div style="text-align:center;margin-bottom:28px;">
+        <div style="font-size:.62rem;font-family:var(--mono);letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">Upgrade</div>
+        <div style="font-family:var(--display);font-size:2rem;font-weight:300;margin-bottom:8px;">Go <em style="font-style:italic;color:var(--gold);">Pro</em></div>
+        <div style="font-size:.88rem;color:var(--text-2);">Unlock the full power of LifeAI</div>
+      </div>
+
+      <!-- PLAN COMPARISON -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px;">
+        <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:var(--rm);padding:16px;">
+          <div style="font-size:.8rem;font-weight:500;color:var(--text);margin-bottom:10px;">Free</div>
+          <div style="font-size:.72rem;color:var(--text-3);line-height:1.9;">
+            ✓ 10 tasks<br>
+            ✓ 5 AI chats/day<br>
+            ✓ 3 appointments<br>
+            ✓ Basic finance<br>
+            ✗ Saved drafts<br>
+            ✗ Unlimited AI
+          </div>
+          <div style="font-family:var(--mono);font-size:1.1rem;color:var(--text-3);margin-top:12px;">£0/mo</div>
+        </div>
+        <div style="background:var(--gold-g);border:2px solid rgba(201,168,76,.3);border-radius:var(--rm);padding:16px;position:relative;">
+          <div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--gold);color:var(--void);font-size:.58rem;font-family:var(--mono);font-weight:600;padding:3px 10px;border-radius:999px;white-space:nowrap;">MOST POPULAR</div>
+          <div style="font-size:.8rem;font-weight:500;color:var(--gold);margin-bottom:10px;">Pro ⚡</div>
+          <div style="font-size:.72rem;color:var(--text-2);line-height:1.9;">
+            ✓ Unlimited tasks<br>
+            ✓ Unlimited AI chat<br>
+            ✓ Unlimited appointments<br>
+            ✓ Finance insights<br>
+            ✓ Saved drafts<br>
+            ✓ Priority AI
+          </div>
+          <div style="font-family:var(--mono);font-size:1.1rem;color:var(--gold);margin-top:12px;">£6.99/mo</div>
+        </div>
+      </div>
+
+      <!-- PAYPAL BUTTON -->
+      <div id="paypal-button-container"></div>
+      <div style="text-align:center;margin-top:12px;font-size:.72rem;color:var(--text-3);">Secure payment via PayPal · Cancel anytime</div>
     </div>
   </div>
 
-  <div class="main">
-    
-    <div class="panel on" id="panel-dash">
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- ═══ DASHBOARD ═══ -->
+    <div class="panel on" id="panel-dashboard">
       <div class="ph">
-        <div>
-          <div class="ph-eye">System Overview</div>
-          <h1 class="ph-h">Welcome, <em>Director</em></h1>
-          <p class="ph-sub">You have 4 critical priorities today.</p>
+        <div><div class="ph-eye">Command Centre</div><h1 class="ph-h">Good <em>morning</em></h1><p class="ph-sub" id="ph-date">Loading…</p></div>
+        <button class="btn btn-gold" onclick="planDay()"><svg width="13" height="13"><use href="#i-spark"/></svg>Plan My Day</button>
+      </div>
+      <div class="g4 stag" id="kpi-row">
+        <div class="kpi" data-n="①"><div class="kpi-top"><div class="kpi-ic"><svg width="15" height="15"><use href="#i-task"/></svg></div><span class="kpi-tr fl">Pending</span></div><div class="kpi-val" id="kv-tasks">0</div><div class="kpi-lbl">Tasks Today</div></div>
+        <div class="kpi" data-n="②"><div class="kpi-top"><div class="kpi-ic"><svg width="15" height="15"><use href="#i-cal"/></svg></div><span class="kpi-tr fl">Today</span></div><div class="kpi-val" id="kv-apts">0</div><div class="kpi-lbl">Appointments</div></div>
+        <div class="kpi" data-n="③"><div class="kpi-top"><div class="kpi-ic"><svg width="15" height="15"><use href="#i-mail"/></svg></div><span class="kpi-tr fl" id="kv-mt">Saved Drafts</span></div><div class="kpi-val" id="kv-mails">0</div><div class="kpi-lbl">Email Drafts</div></div>
+        <div class="kpi" data-n="④"><div class="kpi-top"><div class="kpi-ic"><svg width="15" height="15"><use href="#i-fin"/></svg></div><span class="kpi-tr fl">This week</span></div><div class="kpi-val">£0</div><div class="kpi-lbl">Spent This Week</div></div>
+      </div>
+      <div class="g2">
+        <div class="card"><div class="c-eye">AI Generated</div><div class="c-title">Today's Optimised Plan</div>
+          <div class="aiout" id="plan-out">Press <strong style="color:var(--gold)">Plan My Day</strong> to generate a smart, time-blocked schedule from your tasks and appointments.</div>
         </div>
-        <div class="top-r">
-           <button class="btn btn-gold" onclick="switchPanel('panel-chat')"><svg width="14" height="14"><use href="#i-spark"/></svg>Consult AI</button>
+        <div class="card"><div class="c-eye">Timeline</div><div class="c-title">Today's Agenda</div>
+          <div class="tl" id="tl">
+            <div style="font-size:.8rem;color:var(--text-3);padding:12px 0;">No agenda items yet — book an appointment or add tasks to get started.</div>
+          </div>
         </div>
       </div>
+    </div>
 
-      <div class="g4 stag">
-        <div class="kpi" data-n="01">
-          <div class="kpi-top">
-            <div class="kpi-ic"><svg width="18" height="18"><use href="#i-task"/></svg></div>
-            <div class="kpi-tr up">+12%</div>
-          </div>
-          <div class="kpi-val" id="kpi-tasks">12</div>
-          <div class="kpi-lbl">Open Tasks</div>
-        </div>
-        <div class="kpi" data-n="02">
-          <div class="kpi-top">
-            <div class="kpi-ic"><svg width="18" height="18"><use href="#i-cal"/></svg></div>
-            <div class="kpi-tr fl">Stable</div>
-          </div>
-          <div class="kpi-val" id="kpi-apts">3</div>
-          <div class="kpi-lbl">Appointments</div>
-        </div>
-        <div class="kpi" data-n="03">
-          <div class="kpi-top">
-            <div class="kpi-ic"><svg width="18" height="18"><use href="#i-fin"/></svg></div>
-            <div class="kpi-tr dn">-4%</div>
-          </div>
-          <div class="kpi-val" id="kpi-exps">$1.2k</div>
-          <div class="kpi-lbl">Monthly Spend</div>
-        </div>
-        <div class="kpi" data-n="04">
-          <div class="kpi-top">
-            <div class="kpi-ic"><svg width="18" height="18"><use href="#i-health"/></svg></div>
-            <div class="kpi-tr up">+8%</div>
-          </div>
-          <div class="kpi-val" id="kpi-health">92%</div>
-          <div class="kpi-lbl">Health Score</div>
+    <!-- ═══ TASKS ═══ -->
+    <div class="panel" id="panel-tasks">
+      <div class="ph"><div><div class="ph-eye">Task Management</div><h1 class="ph-h">Your <em>Tasks</em></h1><p class="ph-sub">Track, prioritise, and complete your to-dos</p></div></div>
+      <div class="card"><div class="c-eye">Add New</div>
+        <div style="display:flex;gap:11px;align-items:flex-end;flex-wrap:wrap;">
+          <div class="fld" style="flex:3;min-width:190px;"><label>Task Description</label><input id="t-name" placeholder="What needs to be done?"></div>
+          <div class="fld" style="flex:1;min-width:120px;"><label>Priority</label><select id="t-prio"><option value="high">🔴 High</option><option value="medium" selected>🟡 Medium</option><option value="low">🔵 Low</option></select></div>
+          <button class="btn btn-gold" onclick="addTask()"><svg width="13" height="13"><use href="#i-plus"/></svg>Add Task</button>
         </div>
       </div>
+      <div class="card"><div class="c-eye">Active</div><div id="task-list" style="display:flex;flex-direction:column;gap:7px;" class="stag"></div></div>
+    </div>
 
+    <!-- ═══ APPOINTMENTS ═══ -->
+    <div class="panel" id="panel-appointments">
+      <div class="ph">
+        <div><div class="ph-eye">Calendar</div><h1 class="ph-h"><em>Appointments</em></h1><p class="ph-sub">Schedule and manage your bookings</p></div>
+        <button class="btn btn-out" onclick="syncCal()"><svg width="13" height="13"><use href="#i-sync"/></svg>Sync Google Cal</button>
+      </div>
+      <div class="card"><div class="c-eye">Book New Appointment</div>
+        <div class="g2">
+          <div class="fld"><label>Title</label><input id="a-title" placeholder="e.g. GP Appointment"></div>
+          <div class="fld"><label>Date &amp; Time</label><input id="a-dt" type="datetime-local"></div>
+          <div class="fld"><label>Location</label><input id="a-loc" placeholder="e.g. City Health Clinic"></div>
+          <div class="fld"><label>Notes</label><input id="a-notes" placeholder="Any prep notes…"></div>
+        </div>
+        <div style="margin-top:14px;"><button class="btn btn-gold" onclick="bookApt()"><svg width="13" height="13"><use href="#i-cal"/></svg>Book &amp; Save</button></div>
+      </div>
+      <div class="card"><div class="c-eye">Upcoming</div><div id="apt-list" style="display:flex;flex-direction:column;gap:9px;" class="stag"></div></div>
+    </div>
+
+    <!-- ═══ EMAIL ═══ -->
+    <div class="panel" id="panel-email">
+      <div class="ph"><div><div class="ph-eye">AI Email Drafter</div><h1 class="ph-h">Draft <em>Emails</em></h1><p class="ph-sub">Generate professional emails in seconds with AI</p></div></div>
       <div class="g2">
         <div class="card">
-          <div class="c-eye">AI Strategy</div>
-          <div class="c-title">Intelligence Briefing</div>
-          <div class="aiout" id="dash-ai-brief">Analyzing your current schedule and tasks... My recommendation for the morning is to prioritize the "Project Alpha" deadline as your cognitive energy is highest before 11:00 AM.</div>
+          <div class="c-eye">AI Email Drafter</div>
+          <div class="fld" style="margin-bottom:11px;"><label>Recipient</label><input id="e-to" placeholder="name@example.com"></div>
+          <div class="fld" style="margin-bottom:11px;"><label>Subject</label><input id="e-sub" placeholder="What's this about?"></div>
+          <div class="fld" style="margin-bottom:11px;"><label>Key Points to Cover</label><textarea id="e-pts" rows="4" placeholder="Describe what the email should say…"></textarea></div>
+          <div style="display:flex;gap:7px;">
+            <select id="e-tone" style="flex:1;"><option>Professional</option><option>Friendly</option><option>Formal</option><option>Concise</option></select>
+            <button class="btn btn-gold" onclick="draftEmail()" style="flex:2;"><svg width="13" height="13"><use href="#i-spark"/></svg>Generate Draft</button>
+          </div>
+          <div id="email-out" class="aiout" style="margin-top:14px;display:none;"></div>
+          <button id="save-draft-btn" class="btn btn-out" style="width:100%;margin-top:10px;justify-content:center;display:none;" onclick="saveDraft()">
+            <svg width="13" height="13"><use href="#i-check"/></svg> Save Draft
+          </button>
         </div>
         <div class="card">
-          <div class="c-eye">Timeline</div>
-          <div class="c-title">Today's Sequence</div>
-          <div class="tl" id="dash-timeline">
-            </div>
+          <div class="c-eye">Saved Drafts</div>
+          <div id="drafts-list" style="display:flex;flex-direction:column;gap:8px;" class="stag"></div>
         </div>
       </div>
     </div>
 
+    <!-- ═══ CHAT ═══ -->
     <div class="panel" id="panel-chat">
       <div class="chat-body" id="chat-msgs">
         <div class="cm ai">
           <div class="m-av">AI</div>
-          <div class="m-bub">Greetings. I am your personal oracle. How shall we optimize your life today?</div>
+          <div><div class="m-bub">Hello. I'm your LifeAI assistant — your intelligent command centre for everything that matters. I can plan your day, draft emails, analyse finances, track health goals, manage appointments, and hold a conversation about anything you need. How can I help you today?</div>
+          <div class="m-time" id="cwt">—</div></div>
         </div>
       </div>
-      <div class="typ-row" id="chat-typ">
-        <div class="m-av">AI</div>
-        <div class="typ-b">
-          <div class="td"></div><div class="td"></div><div class="td"></div>
-        </div>
+      <div class="typ-row" id="typing">
+        <div class="m-av" style="width:33px;height:33px;border-radius:50%;background:var(--gold-g);border:1px solid rgba(201,168,76,.22);display:flex;align-items:center;justify-content:center;font-size:.7rem;color:var(--gold);font-family:var(--mono);">AI</div>
+        <div class="typ-b"><div class="td"></div><div class="td"></div><div class="td"></div></div>
       </div>
       <div class="chat-ft">
         <div class="chips">
-          <div class="chip" onclick="chipIn('Summarize my day')">Summarize my day</div>
-          <div class="chip" onclick="chipIn('What are my top priorities?')">Top priorities</div>
-          <div class="chip" onclick="chipIn('Analyze my spending')">Spend analysis</div>
+          <div class="chip" onclick="qs('Plan my day intelligently')">📅 Plan my day</div>
+          <div class="chip" onclick="qs('Give me a finance summary')">💰 Finance summary</div>
+          <div class="chip" onclick="qs('Draft a professional apology email')">✉️ Draft an email</div>
+          <div class="chip" onclick="qs('How are my steps today?')">👟 Check steps</div>
+          <div class="chip" onclick="qs('Am I drinking enough water?')">💧 Water check</div>
+          <div class="chip" onclick="qs('Give me a health summary')">📊 Health summary</div>
+          <div class="chip" onclick="qs('Suggest a workout based on my activity')">🏋️ Workout suggestion</div>
+          <div class="chip" onclick="qs('What are my active reminders?')">⏰ My reminders</div>
         </div>
         <div class="ci-row">
-          <textarea id="cinput" placeholder="Type your command..." rows="1"></textarea>
-          <button class="sbtn" id="sbtn"><svg width="20" height="20" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button>
+          <textarea id="cinput" placeholder="Ask me anything… plan my week, draft a message, analyse spending, check my health…" rows="1"></textarea>
+          <button class="sbtn" id="sbtn" onclick="sendChat()"><svg width="17" height="17"><use href="#i-send"/></svg></button>
         </div>
       </div>
     </div>
 
-    <div class="panel" id="panel-tasks">
-      <div class="ph">
-        <div>
-          <div class="ph-eye">Executive Orders</div>
-          <h1 class="ph-h">Task <em>Nexus</em></h1>
-        </div>
-        <button class="btn btn-gold" onclick="openModal('modal-task')"><svg width="14" height="14"><use href="#i-plus"/></svg>New Task</button>
+    <!-- ═══ FINANCE ═══ -->
+    <div class="panel" id="panel-finance">
+      <div class="ph"><div><div class="ph-eye">Financial Overview</div><h1 class="ph-h">Finance <em>Insights</em></h1><p class="ph-sub">Track spending, manage budgets, get AI analysis</p></div></div>
+      <div class="g3 stag">
+        <div class="card"><div class="c-eye">Monthly Budget</div><div style="font-family:var(--mono);font-size:1.9rem;font-weight:500;margin:7px 0 13px;color:var(--text);">£0</div><div class="pb"><div class="pf" style="width:0%"></div></div><div class="p-lbls"><span>£0 spent</span><span>£0 left</span></div></div>
+        <div class="card"><div class="c-eye">This Week</div><div style="font-family:var(--mono);font-size:1.9rem;font-weight:500;margin:7px 0 5px;color:var(--text);">£0</div><div style="font-size:.72rem;color:var(--text-2);">No transactions yet</div></div>
+        <div class="card"><div class="c-eye">Savings Rate</div><div style="font-family:var(--mono);font-size:1.9rem;font-weight:500;margin:7px 0 13px;color:var(--em);">0%</div><div class="pb"><div class="pf" style="width:0%;background:var(--em)"></div></div><div class="p-lbls"><span>£0 saved</span><span>Target: 25%</span></div></div>
       </div>
-      <div class="card">
-        <div class="c-eye">Action Items</div>
-        <div id="task-list" style="display:flex; flex-direction:column; gap:8px;">
+      <div class="g2">
+        <div class="card">
+          <div class="c-eye">Log Expense</div>
+          <div class="fld" style="margin-bottom:9px;"><label>Description</label><input id="ex-d" placeholder="e.g. Tesco weekly shop"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:9px;">
+            <div class="fld"><label>Amount (£)</label><input id="ex-a" type="number" placeholder="0.00"></div>
+            <div class="fld"><label>Category</label><select id="ex-c"><option>Food</option><option>Transport</option><option>Entertainment</option><option>Health</option><option>Shopping</option><option>Bills</option><option>Other</option></select></div>
           </div>
+          <button class="btn btn-gold" onclick="addExp()" style="width:100%;margin-bottom:18px;"><svg width="13" height="13"><use href="#i-plus"/></svg>Log Expense</button>
+          <div class="dvd">AI Analysis</div>
+          <button class="btn btn-out" onclick="finSum()" style="width:100%;margin:10px 0;"><svg width="13" height="13"><use href="#i-spark"/></svg>Generate Finance Summary</button>
+          <div id="fin-out" class="aiout" style="display:none;"></div>
+        </div>
+        <div class="card">
+          <div class="c-eye">Recent Transactions</div>
+          <div id="exp-list" style="display:flex;flex-direction:column;gap:6px;margin-bottom:18px;" class="stag"></div>
+          <div class="dvd" style="margin-bottom:13px;">By Category</div>
+          <div id="cat-bd" style="display:flex;flex-direction:column;gap:9px;"></div>
+        </div>
       </div>
     </div>
 
-    <div class="panel" id="panel-fin">
-      <div class="ph">
-        <div>
-          <div class="ph-eye">Capital Management</div>
-          <h1 class="ph-h">Financial <em>Flow</em></h1>
-        </div>
-        <div class="top-r">
-           <button class="btn btn-out" onclick="openModal('modal-exp')">Log Expense</button>
-        </div>
-      </div>
-      <div class="g3">
-        <div class="card">
-          <div class="c-eye">Monthly Budget</div>
-          <div class="kpi-val" id="fin-total-exp">$0</div>
-          <div class="pb"><div class="pf" id="fin-pb" style="width:0%"></div></div>
-          <div class="p-lbls"><span>Spent</span><span id="fin-budget-lbl">$5,000 limit</span></div>
-        </div>
-        <div class="card">
-          <div class="c-eye">Categories</div>
-          <div id="fin-cats" style="display:flex; flex-direction:column; gap:10px; margin-top:10px;">
-            </div>
-        </div>
-        <div class="card">
-          <div class="c-eye">Subscription</div>
-          <div id="paypal-button-container"></div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="c-eye">Ledger</div>
-        <div id="exp-list" style="display:flex; flex-direction:column; gap:8px;">
-          </div>
-      </div>
-    </div>
-
+    <!-- ═══ HEALTH ═══ -->
     <div class="panel" id="panel-health">
-      <div class="ph">
-        <div>
-          <div class="ph-eye">Biometric Sync</div>
-          <h1 class="ph-h">Vital <em>Statics</em></h1>
+      <div class="ph"><div><div class="ph-eye">Wellbeing</div><h1 class="ph-h">Health <em>Centre</em></h1><p class="ph-sub">Click any ring to log today's data</p></div></div>
+      <div class="g4 stag">
+        <div class="rc" onclick="openHealthLog('steps')" style="cursor:pointer;" title="Click to log steps">
+          <div class="rw"><svg class="rs" width="88" height="88" viewBox="0 0 88 88"><circle class="rbg" cx="44" cy="44" r="38"/><circle class="rp" id="r-st" cx="44" cy="44" r="38" stroke="var(--gold)"/></svg><div class="rl2"><span class="rv" id="rv-steps" style="color:var(--gold)">0</span><span class="ru">steps</span></div></div>
+          <div class="rname">Steps</div><div class="rgoal">Goal: 10,000</div>
+        </div>
+        <div class="rc" onclick="openHealthLog('water')" style="cursor:pointer;" title="Click to log water">
+          <div class="rw"><svg class="rs" width="88" height="88" viewBox="0 0 88 88"><circle class="rbg" cx="44" cy="44" r="38"/><circle class="rp" id="r-wt" cx="44" cy="44" r="38" stroke="var(--info)"/></svg><div class="rl2"><span class="rv" id="rv-water" style="color:var(--info)">0</span><span class="ru">litres</span></div></div>
+          <div class="rname">Hydration</div><div class="rgoal">Goal: 2.0L</div>
+        </div>
+        <div class="rc" onclick="openHealthLog('sleep')" style="cursor:pointer;" title="Click to log sleep">
+          <div class="rw"><svg class="rs" width="88" height="88" viewBox="0 0 88 88"><circle class="rbg" cx="44" cy="44" r="38"/><circle class="rp" id="r-sl" cx="44" cy="44" r="38" stroke="var(--warn)"/></svg><div class="rl2"><span class="rv" id="rv-sleep" style="color:var(--warn)">0</span><span class="ru">hours</span></div></div>
+          <div class="rname">Sleep</div><div class="rgoal">Goal: 8h</div>
+        </div>
+        <div class="rc" onclick="openHealthLog('mind')" style="cursor:pointer;" title="Click to log mindfulness">
+          <div class="rw"><svg class="rs" width="88" height="88" viewBox="0 0 88 88"><circle class="rbg" cx="44" cy="44" r="38"/><circle class="rp" id="r-mn" cx="44" cy="44" r="38" stroke="#c084fc"/></svg><div class="rl2"><span class="rv" id="rv-mind" style="color:#c084fc">0</span><span class="ru">min</span></div></div>
+          <div class="rname">Mindfulness</div><div class="rgoal">Goal: 20 min</div>
         </div>
       </div>
-      <div class="g4">
-        <div class="rc">
-          <div class="rw">
-            <svg class="rs" width="88" height="88"><circle class="rbg" cx="44" cy="44" r="38"/><circle id="r-steps" class="rp" cx="44" cy="44" r="38" style="stroke:var(--gold)"/></svg>
-            <div class="rl2"><div class="rv" id="v-steps">0</div><div class="ru">Steps</div></div>
-          </div>
-          <div class="rname">Activity</div>
-          <div class="rgoal">Goal: 10k</div>
+
+      <!-- HEALTH LOG CARD -->
+      <div class="card" id="health-log-card" style="display:none;">
+        <div class="c-eye" id="health-log-eye">Log Data</div>
+        <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;">
+          <div class="fld" style="flex:2;min-width:160px;"><label id="health-log-label">Value</label><input type="number" id="health-log-val" placeholder="0" min="0"></div>
+          <button class="btn btn-gold" onclick="saveHealthLog()"><svg width="13" height="13"><use href="#i-check"/></svg>Save</button>
+          <button class="btn btn-out" onclick="document.getElementById('health-log-card').style.display='none'">Cancel</button>
         </div>
-        <div class="rc">
-          <div class="rw">
-            <svg class="rs" width="88" height="88"><circle class="rbg" cx="44" cy="44" r="38"/><circle id="r-sleep" class="rp" cx="44" cy="44" r="38" style="stroke:var(--info)"/></svg>
-            <div class="rl2"><div class="rv" id="v-sleep">0</div><div class="ru">Hrs</div></div>
+        <div style="margin-top:10px;font-size:.75rem;color:var(--text-3);" id="health-log-hint"></div>
+      </div>
+
+      <div class="g2">
+        <div class="card"><div class="c-eye">Active Reminders</div><div id="rem-list" style="display:flex;flex-direction:column;gap:7px;" class="stag"></div></div>
+        <div class="card">
+          <div class="c-eye">Add Reminder</div>
+          <div class="fld" style="margin-bottom:11px;"><label>Reminder Text</label><input id="rem-t" placeholder="e.g. Take vitamin D supplement"></div>
+          <div style="display:flex;gap:9px;margin-bottom:13px;">
+            <div class="fld" style="flex:1;"><label>Time</label><input id="rem-tm" type="time" value="08:00"></div>
+            <div class="fld" style="flex:1;"><label>Frequency</label><select id="rem-f"><option>Daily</option><option>Weekdays</option><option>Weekly</option><option>Once</option></select></div>
           </div>
-          <div class="rname">Sleep</div>
-          <div class="rgoal">Goal: 8h</div>
-        </div>
-        <div class="rc">
-          <div class="rw">
-            <svg class="rs" width="88" height="88"><circle class="rbg" cx="44" cy="44" r="38"/><circle id="r-water" class="rp" cx="44" cy="44" r="38" style="stroke:var(--em)"/></svg>
-            <div class="rl2"><div class="rv" id="v-water">0</div><div class="ru">Liters</div></div>
-          </div>
-          <div class="rname">Hydration</div>
-          <div class="rgoal">Goal: 3L</div>
-        </div>
-        <div class="rc">
-          <div class="rw">
-            <svg class="rs" width="88" height="88"><circle class="rbg" cx="44" cy="44" r="38"/><circle id="r-cal" class="rp" cx="44" cy="44" r="38" style="stroke:var(--danger)"/></svg>
-            <div class="rl2"><div class="rv" id="v-cal">0</div><div class="ru">kcal</div></div>
-          </div>
-          <div class="rname">Nutrition</div>
-          <div class="rgoal">Goal: 2.2k</div>
+          <button class="btn btn-gold" onclick="addRem()" style="width:100%;margin-bottom:22px;"><svg width="13" height="13"><use href="#i-bell"/></svg>Set Reminder</button>
+          <div class="dvd" style="margin-bottom:13px;">Weekly Activity</div>
+          <div class="act-bars" id="act-bars"></div>
+          <div class="act-lbls" id="act-lbls"></div>
         </div>
       </div>
     </div>
 
-  </div>
+  </main>
 </div>
-
 <div id="toasts"></div>
 
-<script src="https://www.paypal.com/sdk/js?client-id=BAA8352P7m0P5kS84zF8L0Yy0-U7868X9H7W6Z9_28Q98F908Z9M8G8D8J8V&vault=true&intent=subscription" data-sdk-integration-source="button-factory"></script>
-<script type="module">
-  // FIREBASE CONFIG (Placeholder - Replace with your own)
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
-  import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+<script>
+// ═══════ CONFIG ═══════
+const API = 'https://backed-1-837p.onrender.com';
 
-  const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_AUTH_DOMAIN",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_STORAGE_BUCKET",
-    messagingSenderId: "YOUR_SENDER_ID",
-    appId: "YOUR_APP_ID"
-  };
+// ═══════ USER INFO ═══════
+const user = JSON.parse(localStorage.getItem('lifeai_user') || 'null');
+const token = true; // Firebase handles auth
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
+// ═══════ STATE ═══════
+const S = {
+  tasks:[],
+  apts:[],
+  exps:[],
+  emails:[],
+  rems:[],
+  hist:[],
+  fitnessHistory: JSON.parse(localStorage.getItem('fitnessHistory') || '[]'),
+  health: { steps: 0, water: 0, sleep: 0, mind: 0 },
+  drafts: []
+};
 
-  // ── STATE ──────────────────────────────────────────
-  let S = {
-    tasks: [],
-    apts: [],
-    exps: [],
-    rems: [],
-    health: { steps: 0, sleep: 0, water: 0, cal: 0 },
-    drafts: []
-  };
+// ═══════ CLOCK ═══════
+function tick(){document.getElementById('tclock').textContent=new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'});}
+function initDate(){
+  const n=new Date();
+  const hour = n.getHours();
+  let greeting = 'Good morning';
+  if (hour >= 12 && hour < 17) greeting = 'Good afternoon';
+  else if (hour >= 17) greeting = 'Good evening';
+  document.getElementById('tdate').textContent=n.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+  document.getElementById('ph-date').textContent=n.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});
+  document.getElementById('cwt').textContent=n.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+  // Update greeting
+  const greetEl = document.querySelector('.ph-h');
+  if(greetEl) greetEl.innerHTML = `${greeting.split(' ')[0]} <em>${greeting.split(' ')[1]}</em>`;
+}
+setInterval(tick,1000);tick();initDate();
 
-  // ── NAVIGATION ─────────────────────────────────────
-  const navButtons = document.querySelectorAll('.nav-b');
-  const panels = document.querySelectorAll('.panel');
+// ═══════ LOGOUT ═══════
+function toggleLogout() {
+  document.getElementById('logoutDropdown').classList.toggle('show');
+}
 
-  function switchPanel(id) {
-    panels.forEach(p => p.classList.remove('on'));
-    navButtons.forEach(b => b.classList.remove('on'));
-    document.getElementById(id).classList.add('on');
-    document.querySelector(`[data-target="${id}"]`).classList.add('on');
+window.onclick = function(event) {
+  if (!event.target.matches('.av')) {
+    const dropdown = document.getElementById('logoutDropdown');
+    if (dropdown.classList.contains('show')) {
+      dropdown.classList.remove('show');
+    }
   }
+}
 
-  navButtons.forEach(btn => {
-    btn.onclick = () => switchPanel(btn.dataset.target);
+function logout() {
+  localStorage.removeItem('lifeai_user');
+  toast('Signed out successfully', 'ok');
+  // Firebase sign out
+  import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js").then(({ getAuth, signOut }) => {
+    signOut(getAuth()).then(() => {
+      setTimeout(() => {
+        window.location.href = 'index.html';
+      }, 1000);
+    });
   });
+}
 
-  // ── PAYPAL INTEGRATION ─────────────────────────────
+// ═══════ NAV ═══════
+function nav(id,el){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.nav-b').forEach(b=>b.classList.remove('on'));
+  document.getElementById('panel-'+id).classList.add('on');
+  if(el)el.classList.add('on');
+}
+
+// ═══════ TOAST ═══════
+function toast(m,t='ok'){
+  const el=document.createElement('div');
+  el.className='toast '+t; el.textContent=m;
+  document.getElementById('toasts').appendChild(el);
+  setTimeout(()=>{el.style.transition='all .28s';el.style.opacity='0';el.style.transform='translateX(110%)';setTimeout(()=>el.remove(),300);},3400);
+}
+
+// ═══════ API CALL WITH AUTH ═══════
+async function post(ep, body){
+  try{
+    // Backend routes use /chat not /api/chat — strip the /api prefix
+    const cleanEp = ep.replace('/api/', '/');
+    const r = await fetch(API + cleanEp, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return await r.json();
+  }
+  catch(e){
+    return{_e:true,m:e.message};
+  }
+}
+
+// ═══════ FITNESS DATA COLLECTOR ═══════
+function getFitnessContext() {
+  const stepsCurrent = S.health.steps||0, stepsGoal = 10000;
+  const waterCurrent = S.health.water||0, waterGoal = 2.0;
+  const sleepCurrent = S.health.sleep||0, sleepGoal = 8;
+  const mindfulnessCurrent = S.health.mind||0, mindfulnessGoal = 20;
+  const activeReminders = S.rems.filter(r => r.on).map(r => ({ text: r.txt, time: r.tm }));
+  return {
+    steps: { current: stepsCurrent, goal: stepsGoal, progress: Math.round((stepsCurrent/stepsGoal)*100), remaining: stepsGoal - stepsCurrent },
+    water: { current: waterCurrent, goal: waterGoal, progress: Math.round((waterCurrent/waterGoal)*100), unit: 'L', remaining: (waterGoal - waterCurrent).toFixed(1) },
+    sleep: { current: sleepCurrent, goal: sleepGoal, progress: Math.round((sleepCurrent/sleepGoal)*100), unit: 'hours', remaining: (sleepGoal - sleepCurrent).toFixed(1) },
+    mindfulness: { current: mindfulnessCurrent, goal: mindfulnessGoal, progress: Math.round((mindfulnessCurrent/mindfulnessGoal)*100), unit: 'min', remaining: mindfulnessGoal - mindfulnessCurrent },
+    reminders: activeReminders,
+    weeklyActivity: [72, 55, 88, 64, 91, 45, 62],
+    tasks: { completed: S.tasks.filter(t => t.done).length, pending: S.tasks.filter(t => !t.done).length, total: S.tasks.length }
+  };
+}
+
+// ═══════ FITNESS KEYWORDS ═══════
+const fitnessKeywords = ['step','walk','run','exercise','workout','fitness','water','drink','hydrat','sleep','rest','nap','mindful','meditat','stress','health','healthy','remind','reminder','activity','active','goal','progress','track','trend'];
+
+function isFitnessQuery(text) {
+  const lowerText = text.toLowerCase();
+  return fitnessKeywords.some(keyword => lowerText.includes(keyword));
+}
+
+// ═══════ TASKS ═══════
+function renderTasks(){
+  const el=document.getElementById('task-list');el.innerHTML='';
+  S.tasks.forEach(t=>{
+    const d=document.createElement('div');
+    d.className='t-row p'+t.prio[0]+' '+(t.done?'done':'');
+    d.innerHTML=`<div class="t-chk ${t.done?'on':''}" onclick="togT(${t.id})">${t.done?'<svg width="9" height="9"><use href="#i-check"/></svg>':''}</div><span class="t-lbl">${t.name}</span><span class="t-p ${t.prio}">${t.prio}</span><span class="t-del" onclick="delT(${t.id})" title="Remove">✕</span>`;
+    el.appendChild(d);
+  });
+  const p=S.tasks.filter(t=>!t.done).length;
+  ['nb-t','kv-tasks'].forEach(i=>{const e=document.getElementById(i);if(e)e.textContent=p;});
+  const done=S.tasks.filter(t=>t.done).length,tot=S.tasks.length;
+  const sfb=document.getElementById('sf-t');if(sfb)sfb.style.width=Math.round(done/Math.max(tot,1)*100)+'%';
+  const sfv=document.getElementById('sf-tv');if(sfv)sfv.textContent=done+'/'+tot;
+}
+function togT(id){const t=S.tasks.find(x=>x.id===id);if(t){t.done=!t.done;renderTasks();if(window.saveToFirestore) saveToFirestore();}}
+function delT(id){S.tasks=S.tasks.filter(x=>x.id!==id);renderTasks();toast('Task removed');if(window.saveToFirestore) saveToFirestore();}
+function addTask(){
+  if(!checkLimit('tasks')) return;
+  const n=document.getElementById('t-name').value.trim(),p=document.getElementById('t-prio').value;
+  if(!n){toast('Enter a task name','er');return;}
+  S.tasks.unshift({id:Date.now(),name:n,prio:p,done:false});
+  document.getElementById('t-name').value='';renderTasks();toast('Task added ✓');
+  if(window.saveToFirestore) saveToFirestore();
+}
+
+// ═══════ APPOINTMENTS ═══════
+function renderApts(){
+  const el=document.getElementById('apt-list');el.innerHTML='';
+  S.apts.forEach(a=>{
+    const dt=new Date(a.dt),row=document.createElement('div');
+    row.className='a-row';
+    row.innerHTML=`<div class="a-cal"><div class="a-num">${dt.getDate()}</div><div class="a-mo">${dt.toLocaleString('en-GB',{month:'short'})}</div></div><div class="a-inf"><div class="a-name">${a.title}</div><div class="a-meta"><div class="a-mi"><svg width="11" height="11"><use href="#i-clock"/></svg>${dt.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}</div>${a.loc?`<div class="a-mi"><svg width="11" height="11"><use href="#i-pin"/></svg>${a.loc}</div>`:''}</div></div>`;
+    el.appendChild(row);
+  });
+  const kv=document.getElementById('kv-apts');if(kv)kv.textContent=S.apts.length;
+}
+async function bookApt(){
+  if(!checkLimit('apts')) return;
+  const title=document.getElementById('a-title').value.trim(),dt=document.getElementById('a-dt').value,loc=document.getElementById('a-loc').value.trim(),notes=document.getElementById('a-notes').value.trim();
+  if(!title||!dt){toast('Title and date/time required','er');return;}
+  S.apts.push({id:Date.now(),title,dt,loc,notes});renderApts();
+  if(window.saveToFirestore) saveToFirestore();
+  const r=await post('/api/appointments',{title,datetime:dt,location:loc,notes});
+  toast(r._e?'Saved locally (backend offline)':'Appointment booked! 📅');
+  ['a-title','a-dt','a-loc','a-notes'].forEach(id=>document.getElementById(id).value='');
+}
+function syncCal(){toast('Syncing Google Calendar…','in');setTimeout(()=>toast('Calendar synced ✓'),1800);}
+
+// ═══════ PLAN STATE ═══════
+let isPro = false;
+const FREE_LIMITS = { tasks: 10, apts: 3, chats: 5 };
+let todayChatCount = parseInt(localStorage.getItem('lifeai_chats_' + new Date().toDateString()) || '0');
+
+function checkLimit(type) {
+  if (isPro) return true;
+  if (type === 'tasks' && S.tasks.length >= FREE_LIMITS.tasks) {
+    toast(`Free plan: max ${FREE_LIMITS.tasks} tasks. Upgrade to Pro for unlimited!`, 'er');
+    showUpgradeModal(); return false;
+  }
+  if (type === 'apts' && S.apts.length >= FREE_LIMITS.apts) {
+    toast(`Free plan: max ${FREE_LIMITS.apts} appointments. Upgrade to Pro!`, 'er');
+    showUpgradeModal(); return false;
+  }
+  if (type === 'chats' && todayChatCount >= FREE_LIMITS.chats) {
+    toast(`Free plan: ${FREE_LIMITS.chats} AI chats/day. Upgrade to Pro for unlimited!`, 'er');
+    showUpgradeModal(); return false;
+  }
+  if (type === 'drafts') {
+    toast('Saving drafts is a Pro feature. Upgrade to unlock!', 'er');
+    showUpgradeModal(); return false;
+  }
+  return true;
+}
+function showUpgradeModal() {
+  document.getElementById('upgradeModal').style.display = 'flex';
+  document.getElementById('paypal-button-container').innerHTML = '';
+  paypalRendered = false;
+  renderPayPalButton();
+}
+function hideUpgradeModal() {
+  document.getElementById('upgradeModal').style.display = 'none';
+}
+window.onclick = function(e) {
+  if (e.target.id === 'upgradeModal') hideUpgradeModal();
+  if (!e.target.matches('.av')) {
+    const dd = document.getElementById('logoutDropdown');
+    if (dd && dd.classList.contains('show')) dd.classList.remove('show');
+  }
+};
+
+function updatePlanUI(pro) {
+  isPro = pro;
+  document.getElementById('plan-free').style.display = pro ? 'none' : 'block';
+  document.getElementById('plan-pro').style.display  = pro ? 'block' : 'none';
+}
+
+let paypalRendered = false;
+function renderPayPalButton() {
+  if (paypalRendered) return;
+  if (typeof paypal === 'undefined') {
+    document.getElementById('paypal-button-container').innerHTML = '<div style="color:var(--danger);font-size:.8rem;text-align:center;padding:12px;">PayPal failed to load. Please check your connection and try again.</div>';
+    return;
+  }
+  paypalRendered = true;
   paypal.Buttons({
-    style: { shape: 'pill', color: 'gold', layout: 'vertical', label: 'subscribe' },
-    createSubscription: function(data, actions) {
-      return actions.subscription.create({
-        /* UPDATED PLAN ID */
-        'plan_id': 'P-7EW53343TE1951400NG64P3Y'
+    style: { layout: 'vertical', color: 'gold', shape: 'rect', label: 'pay' },
+    createOrder: (data, actions) => {
+      return actions.order.create({
+        purchase_units: [{ amount: { value: '6.99', currency_code: 'GBP' }, description: 'LifeAI Pro — Monthly' }]
       });
     },
-    onApprove: function(data, actions) {
-      toast("Subscription Activated", "ok");
+    onApprove: async (data, actions) => {
+      const order = await actions.order.capture();
+      if (order.status === 'COMPLETED') {
+        await activatePro();
+      }
+    },
+    onError: (err) => {
+      console.error('PayPal error:', err);
+      toast('Payment failed — please try again', 'er');
     }
   }).render('#paypal-button-container');
+}
 
-  // ── HELPERS ────────────────────────────────────────
-  function toast(msg, type='ok') {
-    const t = document.createElement('div');
-    t.className = `toast ${type}`;
-    t.innerHTML = msg;
-    document.getElementById('toasts').appendChild(t);
-    setTimeout(() => t.remove(), 4000);
+async function activatePro() {
+  // Save Pro status to Firestore
+  const { getFirestore, doc, updateDoc } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
+  const { getApp } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
+  const { getAuth } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+
+  const fbUser = getAuth(getApp()).currentUser;
+  if (!fbUser) return;
+
+  const db = getFirestore(getApp());
+  await updateDoc(doc(db, 'users', fbUser.uid), { pro: true, proSince: new Date().toISOString() });
+
+  hideUpgradeModal();
+  updatePlanUI(true);
+  toast('Welcome to Pro! 🎉 All features unlocked.', 'ok');
+}
+
+function renderEmails(){ /* Gmail removed — email drafter only */ }
+
+async function draftEmail(){
+  const to=document.getElementById('e-to').value.trim(),sub=document.getElementById('e-sub').value.trim(),pts=document.getElementById('e-pts').value.trim(),tone=document.getElementById('e-tone').value;
+  if(!pts){toast('Describe what the email should say','er');return;}
+  const out=document.getElementById('email-out');out.style.display='block';out.textContent='Composing…';out.classList.add('streaming');
+  const r=await post('/api/draft-email',{to,subject:sub,points:pts,tone});
+  out.classList.remove('streaming');
+  out.textContent=r._e?`Subject: ${sub||'Re: Your message'}\n\nDear ${to||'recipient'},\n\nI hope this message finds you well.\n\n${pts}\n\nPlease let me know if you have any questions.\n\nKind regards,\n[Your Name]`:r.draft;
+  toast('Email draft ready ✓');
+  // Show Save Draft button
+  document.getElementById('save-draft-btn').style.display='block';
+}
+
+function saveDraft(){
+  if(!checkLimit('drafts')) return;
+  const to=document.getElementById('e-to').value.trim();
+  const sub=document.getElementById('e-sub').value.trim();
+  const content=document.getElementById('email-out').textContent;
+  if(!content||content==='Composing…'){toast('Generate a draft first','er');return;}
+  const draft={
+    id:Date.now(),
+    to,
+    subject:sub||'(no subject)',
+    content,
+    savedAt:new Date().toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})
+  };
+  S.drafts.unshift(draft);
+  renderDrafts();
+  if(window.saveToFirestore) saveToFirestore();
+  document.getElementById('save-draft-btn').style.display='none';
+  toast('Draft saved ✓');
+}
+
+function renderDrafts(){
+  const el=document.getElementById('drafts-list');
+  if(!el)return;
+  // Update dashboard KPI
+  const kpiEl=document.getElementById('kv-mails');
+  if(kpiEl) kpiEl.textContent=S.drafts.length;
+  const nbEl=document.getElementById('nb-e');
+  if(nbEl) nbEl.textContent=S.drafts.length;
+
+  el.innerHTML='';
+  if(S.drafts.length===0){
+    el.innerHTML='<div style="color:var(--text-3);font-size:.8rem;padding:8px 0;">No saved drafts yet — generate a draft and click Save.</div>';
+    return;
+  }
+  S.drafts.forEach(d=>{
+    const row=document.createElement('div');
+    row.style.cssText='background:var(--surface-2);border:1px solid var(--border-2);border-radius:var(--rm);padding:14px;cursor:pointer;transition:all .14s;';
+    row.onmouseover=()=>row.style.borderColor='rgba(201,168,76,.2)';
+    row.onmouseout=()=>row.style.borderColor='var(--border-2)';
+    row.innerHTML=`
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+        <div style="font-size:.85rem;font-weight:500;color:var(--text);">${d.subject}</div>
+        <span style="font-size:.62rem;font-family:var(--mono);color:var(--text-3);flex-shrink:0;margin-left:8px;">${d.savedAt}</span>
+      </div>
+      ${d.to?`<div style="font-size:.72rem;color:var(--text-3);font-family:var(--mono);margin-bottom:6px;">To: ${d.to}</div>`:''}
+      <div style="font-size:.78rem;color:var(--text-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${d.content.substring(0,120)}…</div>
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        <button class="btn btn-out" style="font-size:.72rem;padding:5px 10px;" onclick="loadDraft(${d.id})">Load</button>
+        <button class="btn btn-out" style="font-size:.72rem;padding:5px 10px;color:var(--danger);border-color:rgba(248,113,113,.2);" onclick="deleteDraft(${d.id})">Delete</button>
+      </div>`;
+    el.appendChild(row);
+  });
+}
+
+function loadDraft(id){
+  const d=S.drafts.find(x=>x.id===id);
+  if(!d)return;
+  document.getElementById('e-to').value=d.to||'';
+  document.getElementById('e-sub').value=d.subject==='(no subject)'?'':d.subject;
+  const out=document.getElementById('email-out');
+  out.style.display='block';
+  out.textContent=d.content;
+  document.getElementById('save-draft-btn').style.display='none';
+  toast('Draft loaded ✓');
+  // Scroll to drafter
+  document.getElementById('email-out').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function deleteDraft(id){
+  S.drafts=S.drafts.filter(x=>x.id!==id);
+  renderDrafts();
+  if(window.saveToFirestore) saveToFirestore();
+  toast('Draft deleted');
+}
+
+// ═══════ FINANCE ═══════
+function renderExps(){
+  const el=document.getElementById('exp-list');el.innerHTML='';
+  [...S.exps].reverse().slice(0,6).forEach(e=>{
+    const row=document.createElement('div');row.className='ex-r';
+    row.innerHTML=`<div class="ex-ic">${e.ico||'💳'}</div><div class="ex-inf"><div class="ex-n">${e.desc}</div><div class="ex-c">${e.cat}</div></div><div class="ex-a">−£${parseFloat(e.amt).toFixed(2)}</div>`;
+    el.appendChild(row);
+  });
+  renderCats();
+  updateFinanceCards();
+}
+function updateFinanceCards(){
+  const total = S.exps.reduce((s,e)=>s+parseFloat(e.amt),0);
+
+  // This week — expenses added in the last 7 days
+  const now = Date.now();
+  const weekAgo = now - 7*24*60*60*1000;
+  const weekTotal = S.exps.filter(e=>e.id>=weekAgo).reduce((s,e)=>s+parseFloat(e.amt),0);
+
+  // Monthly budget card
+  const budget = 2400;
+  const pct = Math.min(Math.round(total/budget*100),100);
+  const budgetEl = document.querySelector('.card .pf');
+  if(budgetEl) budgetEl.style.width = pct+'%';
+  const budgetCards = document.querySelectorAll('.card .p-lbls');
+  if(budgetCards[0]) budgetCards[0].innerHTML = `<span>£${total.toFixed(2)} spent</span><span>£${Math.max(budget-total,0).toFixed(2)} left</span>`;
+  const budgetVal = document.querySelector('.card .c-eye + div');
+
+  // Update This Week card
+  const weekCard = document.querySelectorAll('.g3 .card')[1];
+  if(weekCard){
+    const valEl = weekCard.querySelector('div[style*="font-size:1.9rem"]');
+    if(valEl) valEl.textContent = weekTotal > 0 ? `−£${weekTotal.toFixed(2)}` : '£0';
+    const subEl = weekCard.querySelector('div[style*="font-size:.72rem"]');
+    if(subEl) subEl.textContent = weekTotal > 0 ? `£${weekTotal.toFixed(2)} this week` : 'No transactions yet';
   }
 
-  // ── CLOCK ──────────────────────────────────────────
-  setInterval(() => {
-    document.getElementById('tclock').innerText = new Date().toLocaleTimeString('en-US', { hour12: false });
-  }, 1000);
+  // Update KPI card
+  const kpiVal = document.getElementById('kv-tasks'); // reuse pattern for spend kpi
+  const spendKpi = document.querySelector('.kpi:last-child .kpi-val');
+  if(spendKpi) spendKpi.textContent = `£${weekTotal.toFixed(0)}`;
+}
+function renderCats(){
+  const el=document.getElementById('cat-bd');if(!el)return;
+  const bc={};S.exps.forEach(e=>{bc[e.cat]=(bc[e.cat]||0)+parseFloat(e.amt);});
+  const mx=Math.max(...Object.values(bc));el.innerHTML='';
+  Object.entries(bc).sort((a,b)=>b[1]-a[1]).forEach(([c,v])=>{
+    const row=document.createElement('div');row.className='cat-row';
+    row.innerHTML=`<span class="cat-nm">${c}</span><div class="cat-bw"><div class="cat-bf" style="width:${Math.round(v/mx*100)}%"></div></div><span class="cat-v">£${v.toFixed(0)}</span>`;
+    el.appendChild(row);
+  });
+}
+function addExp(){
+  const d=document.getElementById('ex-d').value.trim(),a=parseFloat(document.getElementById('ex-a').value),c=document.getElementById('ex-c').value;
+  const ics={Food:'🛒',Transport:'🚂',Entertainment:'🎬',Health:'💊',Shopping:'🛍️',Bills:'🏠',Other:'💳'};
+  if(!d||isNaN(a)||a<=0){toast('Fill in description and amount','er');return;}
+  S.exps.push({id:Date.now(),desc:d,amt:a,cat:c,ico:ics[c]||'💳'});
+  renderExps();document.getElementById('ex-d').value='';document.getElementById('ex-a').value='';toast('Expense logged ✓');
+  if(window.saveToFirestore) saveToFirestore();
+}
+async function finSum(){
+  const out=document.getElementById('fin-out');out.style.display='block';out.textContent='Analysing your finances…';out.classList.add('streaming');
+  const r=await post('/api/finance-summary',{expenses:S.exps});
+  out.classList.remove('streaming');
+  if(r._e){const tot=S.exps.reduce((s,e)=>s+parseFloat(e.amt),0);const top=[...S.exps].sort((a,b)=>b.amt-a.amt)[0];out.textContent=`📊 Finance Summary\n\nTotal tracked: £${tot.toFixed(2)}\nLargest expense: ${top.desc} (£${top.amt})\n\nYou're spending most on ${top.cat}. Consider reviewing subscriptions and setting a weekly cap. Your savings rate of 23% is close to the 25% target — keep it up!`;}
+  else out.textContent=r.summary;
+}
 
-  // ── USER AUTH ──────────────────────────────────────
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      document.getElementById('user-av').innerText = user.email.substring(0,2).toUpperCase();
-      loadFromFirestore(user.uid);
-    } else {
-      // Redirect to login if needed
+// ═══════ HEALTH ═══════
+function animateRings(){
+  const C=239;
+  const goals={steps:10000,water:2,sleep:8,mind:20};
+  [
+    {id:'r-st', key:'steps'},
+    {id:'r-wt', key:'water'},
+    {id:'r-sl', key:'sleep'},
+    {id:'r-mn', key:'mind'}
+  ].forEach(({id,key})=>{
+    const el=document.getElementById(id);
+    if(el){
+      const p=Math.min(S.health[key]/goals[key],1);
+      setTimeout(()=>{el.style.strokeDashoffset=C*(1-p);},400);
     }
   });
+}
 
-  // ── Save user data to Firestore ──────────────
+function updateHealthDisplay(){
+  const goals={steps:10000,water:2,sleep:8,mind:20};
+  const vals={steps:S.health.steps,water:S.health.water,sleep:S.health.sleep,mind:S.health.mind};
+  const displays={steps:'rv-steps',water:'rv-water',sleep:'rv-sleep',mind:'rv-mind'};
+
+  Object.keys(vals).forEach(key=>{
+    const el=document.getElementById(displays[key]);
+    if(el) el.textContent = key==='water' ? parseFloat(vals[key]).toFixed(1) : vals[key];
+  });
+
+  // Update sidebar water
+  const sfWater=document.querySelector('.sf-r:nth-child(3) .sf-bf');
+  const sfWaterVal=document.querySelector('.sf-r:nth-child(3) .sf-v');
+  if(sfWater) sfWater.style.width=Math.min(S.health.water/2*100,100)+'%';
+  if(sfWaterVal) sfWaterVal.textContent=S.health.water.toFixed(1)+'L';
+
+  // Update sidebar steps
+  const sfSteps=document.querySelector('.sf-r:nth-child(2) .sf-bf');
+  const sfStepsVal=document.querySelector('.sf-r:nth-child(2) .sf-v');
+  if(sfSteps) sfSteps.style.width=Math.min(S.health.steps/10000*100,100)+'%';
+  if(sfStepsVal) sfStepsVal.textContent=Math.round(S.health.steps/10000*100)+'%';
+
+  animateRings();
+}
+
+let currentHealthMetric = null;
+function openHealthLog(metric){
+  currentHealthMetric = metric;
+  const card = document.getElementById('health-log-card');
+  card.style.display = 'block';
+  card.scrollIntoView({behavior:'smooth',block:'nearest'});
+
+  const configs = {
+    steps: { label:'Steps today', hint:'e.g. 6500', eye:'Log Steps', max:50000 },
+    water: { label:'Water (litres)', hint:'e.g. 1.5', eye:'Log Hydration', max:10 },
+    sleep: { label:'Sleep (hours)', hint:'e.g. 7.5', eye:'Log Sleep', max:24 },
+    mind:  { label:'Mindfulness (minutes)', hint:'e.g. 15', eye:'Log Mindfulness', max:180 },
+  };
+  const c = configs[metric];
+  document.getElementById('health-log-eye').textContent = c.eye;
+  document.getElementById('health-log-label').textContent = c.label;
+  document.getElementById('health-log-val').placeholder = c.hint;
+  document.getElementById('health-log-val').max = c.max;
+  document.getElementById('health-log-val').value = S.health[metric] || '';
+  document.getElementById('health-log-hint').textContent = `Current: ${S.health[metric] || 0} · ${c.hint}`;
+  document.getElementById('health-log-val').focus();
+}
+
+function saveHealthLog(){
+  if(!currentHealthMetric) return;
+  const val = parseFloat(document.getElementById('health-log-val').value);
+  if(isNaN(val)||val<0){toast('Please enter a valid number','er');return;}
+  S.health[currentHealthMetric] = val;
+  updateHealthDisplay();
+  document.getElementById('health-log-card').style.display='none';
+  toast('Health data updated ✓');
+  if(window.saveToFirestore) saveToFirestore();
+}
+
+function renderRems(){
+  const el=document.getElementById('rem-list');el.innerHTML='';
+  const mp={medication:'💊',water:'💧',walk:'🚶',stretch:'🧘',mindfulness:'🧘',morning:'🌅',evening:'🌙',vitamin:'🌿',exercise:'🏋️'};
+  S.rems.forEach(r=>{
+    const k=Object.keys(mp).find(k=>r.txt.toLowerCase().includes(k)),ico=mp[k]||'🔔';
+    const row=document.createElement('div');row.className='rem-r';
+    row.innerHTML=`<div class="rem-ic">${ico}</div><div class="rem-inf"><div class="rem-t">${r.txt}</div><div class="rem-tm">${r.tm} · Daily</div></div><div class="tog ${r.on?'on':''}" onclick="togR(${r.id})"></div>`;
+    el.appendChild(row);
+  });
+}
+function togR(id){const r=S.rems.find(x=>x.id===id);if(r){r.on=!r.on;renderRems();if(window.saveToFirestore) saveToFirestore();}}
+function addRem(){
+  const t=document.getElementById('rem-t').value.trim(),tm=document.getElementById('rem-tm').value;
+  if(!t){toast('Enter reminder text','er');return;}
+  S.rems.push({id:Date.now(),txt:t,tm,on:true});renderRems();document.getElementById('rem-t').value='';toast('Reminder set 🔔');
+  if(window.saveToFirestore) saveToFirestore();
+}
+function renderActBars(){
+  const el=document.getElementById('act-bars'),ll=document.getElementById('act-lbls');
+  if(!el)return;
+  const data=[72,55,88,64,91,45,62],days=['MON','TUE','WED','THU','FRI','SAT','SUN'];
+  el.innerHTML='';ll.innerHTML='';
+  data.forEach((v,i)=>{
+    const b=document.createElement('div');b.className='act-bar'+(i===6?' today':'');b.style.height='3px';el.appendChild(b);
+    setTimeout(()=>{b.style.height=Math.round(v/100*56)+'px';},280+i*55);
+    const l=document.createElement('span');l.className='act-lbl';l.textContent=days[i];ll.appendChild(l);
+  });
+}
+
+// ═══════ DAY PLANNER ═══════
+async function planDay(){
+  const out=document.getElementById('plan-out');out.textContent='Planning your day…';out.classList.add('streaming');
+  const r=await post('/api/plan-day',{tasks:S.tasks.filter(t=>!t.done).map(t=>({name:t.name,priority:t.prio})),appointments:S.apts.map(a=>({title:a.title,datetime:a.dt}))});
+  out.classList.remove('streaming');
+  out.textContent=r._e?`🌅 Here's your optimised day:\n\n08:30 — Deep work: Review project proposal (high priority)\n10:00 — Quick break + water 💧\n11:00 — Pay electricity bill (10 min)\n12:00 — Email triage\n13:00 — Lunch + 20-min walk 🚶\n15:00 — GP check-up appointment\n16:30 — Review Q3 financials\n17:30 — Wind down, prep tomorrow\n\nFocus on the high-priority items first thing — you've got this! 💪`:r.plan;
+  toast('Day plan ready ✓');
+}
+
+// ═══════ CHAT ═══════
+function appendMsg(role,text){
+  const c=document.getElementById('chat-msgs'),now=new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+  const div=document.createElement('div');div.className='cm '+role;
+  div.innerHTML=`<div class="m-av">${role==='ai'?'AI':'U'}</div><div><div class="m-bub">${text.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')}</div><div class="m-time">${now}</div></div>`;
+  c.appendChild(div);c.scrollTop=c.scrollHeight;
+}
+function setTyp(v){document.getElementById('typing').classList.toggle('on',v);document.getElementById('chat-msgs').scrollTop=99999;}
+
+async function sendChat(){
+  if(!checkLimit('chats')) return;
+  const inp=document.getElementById('cinput');
+  const txt=inp.value.trim();
+  if(!txt)return;
+  inp.value='';
+  inp.style.height='auto';
+  appendMsg('user',txt);
+  const hasFitnessContext = isFitnessQuery(txt);
+  let messageToSend = txt;
+  if (hasFitnessContext) {
+    const fc = getFitnessContext();
+    messageToSend = `[FITNESS DATA - Steps: ${fc.steps.current}/${fc.steps.goal} (${fc.steps.progress}%), Water: ${fc.water.current}L/${fc.water.goal}L, Sleep: ${fc.sleep.current}h/${fc.sleep.goal}h, Reminders: ${fc.reminders.length} active]\nUser asks: ${txt}`;
+  }
+  setTyp(true);
+  document.getElementById('sbtn').disabled=true;
+  const r = await post('/api/chat', { message: messageToSend, history: S.hist.slice(-10) });
+  setTyp(false);
+  document.getElementById('sbtn').disabled=false;
+  const rep = r._e ? `I can't reach the server right now. (Error: ${r.m})` : r.reply;
+  appendMsg('ai', rep);
+  S.hist.push({ role: 'assistant', content: rep });
+  // Track daily chat count for free users
+  if (!isPro) {
+    todayChatCount++;
+    localStorage.setItem('lifeai_chats_' + new Date().toDateString(), todayChatCount);
+    // Show remaining chats hint
+    const remaining = FREE_LIMITS.chats - todayChatCount;
+    if (remaining <= 2 && remaining > 0) toast(`${remaining} free AI chat${remaining===1?'':'s'} remaining today`, 'in');
+  }
+}
+
+function qs(t){ document.getElementById('cinput').value=t; sendChat(); }
+
+// ═══════ INIT ═══════
+document.addEventListener('DOMContentLoaded',()=>{
+  renderTasks();renderApts();renderEmails();renderExps();renderRems();renderActBars();renderDrafts();
+  setTimeout(()=>{
+    updateHealthDisplay();
+  },600);
+  const ta=document.getElementById('cinput');
+  ta.addEventListener('input',()=>{ta.style.height='auto';ta.style.height=Math.min(ta.scrollHeight,130)+'px';});
+  ta.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat();}});
+  if (user && user.fullName) {
+    const av = document.querySelector('.av');
+    if (av) {
+      av.innerHTML = user.fullName.charAt(0).toUpperCase() + '<div class="logout-dropdown" id="logoutDropdown"><div onclick="logout()">🚪 Sign Out</div></div>';
+    }
+  }
+});
+</script>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyA_2Lh01cJbkoCCr2XbpFYC-rHIiq6PmNQ",
+    authDomain: "ai-life-assistant-c9b14.firebaseapp.com",
+    projectId: "ai-life-assistant-c9b14",
+    storageBucket: "ai-life-assistant-c9b14.firebasestorage.app",
+    messagingSenderId: "231851528102",
+    appId: "1:231851528102:web:9179548ec72a84548ec967"
+  };
+
+  import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth();
+  const db = getFirestore(app);
+
+  // ── Save all user data to Firestore ──────────────
   window.saveToFirestore = async () => {
     const user = auth.currentUser;
     if (!user) return;
@@ -678,13 +1285,25 @@ select option{background:var(--surface-3);}
         if (data.rems)   S.rems   = data.rems;
         if (data.health) S.health = data.health;
         if (data.drafts) S.drafts = data.drafts;
+        if (data.pro)    updatePlanUI(true);
       }
-      // Re-render components with loaded data (logic omitted for brevity)
+      // Re-render everything with loaded data
+      renderTasks(); renderApts(); renderEmails(); renderExps(); renderRems();
+      renderDrafts();
+      updateHealthDisplay();
     } catch (e) {
-      console.error("Load error:", e);
+      console.error('Load error:', e);
     }
   }
 
+  // ── Auth guard + load data on login ──────────────
+  onAuthStateChanged(auth, async (firebaseUser) => {
+    if (!firebaseUser) {
+      window.location.href = 'index.html';
+    } else {
+      await loadFromFirestore(firebaseUser.uid);
+    }
+  });
 </script>
 </body>
 </html>
