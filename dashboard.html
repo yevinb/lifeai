@@ -634,6 +634,8 @@ select option{background:var(--surface-3);}
 </div>
 <div id="toasts"></div>
 
+<!-- Replace everything from after the UPGRADE MODAL section to the end with this -->
+
 <script>
 // ═══════ CONFIG ═══════
 const API = 'https://backed-1-837p.onrender.com';
@@ -684,6 +686,8 @@ window.onclick = function(event) {
       dropdown.classList.remove('show');
     }
   }
+  // Also handle modal click outside
+  if (event.target.id === 'upgradeModal') hideUpgradeModal();
 }
 
 function logout() {
@@ -693,7 +697,7 @@ function logout() {
   import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js").then(({ getAuth, signOut }) => {
     signOut(getAuth()).then(() => {
       setTimeout(() => {
-        window.location.href = 'index.html';
+        window.location.href = '/AI-Life-Assistant/home.html';
       }, 1000);
     });
   });
@@ -834,22 +838,21 @@ function checkLimit(type) {
   }
   return true;
 }
+
 function showUpgradeModal() {
-  document.getElementById('upgradeModal').style.display = 'flex';
-  document.getElementById('paypal-button-container').innerHTML = '';
+  const modal = document.getElementById('upgradeModal');
+  modal.style.display = 'flex';
+  // Clear the container and re-render button
+  const container = document.getElementById('paypal-button-container');
+  container.innerHTML = '';
   paypalRendered = false;
-  renderPayPalButton();
+  // Small delay to ensure DOM is ready
+  setTimeout(() => renderPayPalButton(), 100);
 }
+
 function hideUpgradeModal() {
   document.getElementById('upgradeModal').style.display = 'none';
 }
-window.onclick = function(e) {
-  if (e.target.id === 'upgradeModal') hideUpgradeModal();
-  if (!e.target.matches('.av')) {
-    const dd = document.getElementById('logoutDropdown');
-    if (dd && dd.classList.contains('show')) dd.classList.remove('show');
-  }
-};
 
 function updatePlanUI(pro) {
   isPro = pro;
@@ -858,49 +861,111 @@ function updatePlanUI(pro) {
 }
 
 let paypalRendered = false;
+
 function renderPayPalButton() {
   if (paypalRendered) return;
+  
+  // Check if PayPal SDK is loaded
   if (typeof paypal === 'undefined') {
-    document.getElementById('paypal-button-container').innerHTML = '<div style="color:var(--danger);font-size:.8rem;text-align:center;padding:12px;">PayPal failed to load. Please check your connection and try again.</div>';
+    console.error('PayPal SDK not loaded');
+    document.getElementById('paypal-button-container').innerHTML = 
+      '<div style="color:var(--danger);font-size:.8rem;text-align:center;padding:12px;">⚠️ PayPal failed to load. Please check your connection and try again.</div>';
     return;
   }
+  
   paypalRendered = true;
-  paypal.Buttons({
-    style: { layout: 'vertical', color: 'gold', shape: 'rect', label: 'pay' },
-    createOrder: (data, actions) => {
-      return actions.order.create({
-        purchase_units: [{ amount: { value: '6.99', currency_code: 'GBP' }, description: 'LifeAI Pro — Monthly' }]
-      });
-    },
-    onApprove: async (data, actions) => {
-      const order = await actions.order.capture();
-      if (order.status === 'COMPLETED') {
-        await activatePro();
+  
+  try {
+    paypal.Buttons({
+      style: { 
+        layout: 'vertical', 
+        color: 'gold', 
+        shape: 'rect', 
+        label: 'subscribe',
+        height: 45
+      },
+      createOrder: (data, actions) => {
+        return actions.order.create({
+          purchase_units: [{ 
+            amount: { value: '6.99', currency_code: 'GBP' }, 
+            description: 'LifeAI Pro — Monthly Subscription'
+          }],
+          application_context: {
+            shipping_preference: 'NO_SHIPPING',
+            user_action: 'PAY_NOW'
+          }
+        });
+      },
+      onApprove: async (data, actions) => {
+        try {
+          const order = await actions.order.capture();
+          if (order.status === 'COMPLETED') {
+            await activatePro();
+            toast('Payment successful! Welcome to Pro! 🎉', 'ok');
+          } else {
+            toast('Payment was not completed. Please try again.', 'er');
+          }
+        } catch (err) {
+          console.error('Capture error:', err);
+          toast('Payment processing failed. Please try again.', 'er');
+        }
+      },
+      onError: (err) => {
+        console.error('PayPal error:', err);
+        toast('Payment failed — please check your connection and try again', 'er');
+        paypalRendered = false; // Allow retry
+      },
+      onCancel: () => {
+        toast('Payment cancelled', 'in');
+        paypalRendered = false; // Allow retry
       }
-    },
-    onError: (err) => {
-      console.error('PayPal error:', err);
-      toast('Payment failed — please try again', 'er');
-    }
-  }).render('#paypal-button-container');
+    }).render('#paypal-button-container');
+  } catch (err) {
+    console.error('PayPal render error:', err);
+    document.getElementById('paypal-button-container').innerHTML = 
+      '<div style="color:var(--danger);font-size:.8rem;text-align:center;padding:12px;">⚠️ Unable to load PayPal. Please refresh and try again.</div>';
+    paypalRendered = false;
+  }
 }
 
 async function activatePro() {
   // Save Pro status to Firestore
-  const { getFirestore, doc, updateDoc } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
-  const { getApp } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
-  const { getAuth } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+  try {
+    const { getFirestore, doc, updateDoc } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
+    const { getApp } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
+    const { getAuth } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
 
-  const fbUser = getAuth(getApp()).currentUser;
-  if (!fbUser) return;
+    const fbUser = getAuth(getApp()).currentUser;
+    if (!fbUser) {
+      console.error('No user logged in');
+      return;
+    }
 
-  const db = getFirestore(getApp());
-  await updateDoc(doc(db, 'users', fbUser.uid), { pro: true, proSince: new Date().toISOString() });
+    const db = getFirestore(getApp());
+    await updateDoc(doc(db, 'users', fbUser.uid), { 
+      pro: true, 
+      proSince: new Date().toISOString() 
+    });
 
-  hideUpgradeModal();
-  updatePlanUI(true);
-  toast('Welcome to Pro! 🎉 All features unlocked.', 'ok');
+    hideUpgradeModal();
+    updatePlanUI(true);
+    toast('Welcome to Pro! 🎉 All features unlocked.', 'ok');
+  } catch (err) {
+    console.error('Pro activation error:', err);
+    toast('Pro activated but please refresh the page.', 'in');
+    updatePlanUI(true);
+    hideUpgradeModal();
+  }
 }
+
+// Ensure PayPal renders when modal opens
+document.addEventListener('DOMContentLoaded', () => {
+  // Pre-load the PayPal button container with a placeholder
+  const container = document.getElementById('paypal-button-container');
+  if (container) {
+    container.innerHTML = '<div style="text-align:center;padding:12px;color:var(--text-3);">Loading PayPal...</div>';
+  }
+});
 
 function renderEmails(){ /* Gmail removed — email drafter only */ }
 
@@ -1232,7 +1297,91 @@ document.addEventListener('DOMContentLoaded',()=>{
       av.innerHTML = user.fullName.charAt(0).toUpperCase() + '<div class="logout-dropdown" id="logoutDropdown"><div onclick="logout()">🚪 Sign Out</div></div>';
     }
   }
+  
+  // Ensure PayPal button is ready when modal opens
+  const modal = document.getElementById('upgradeModal');
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+        if (modal.style.display === 'flex') {
+          setTimeout(() => renderPayPalButton(), 150);
+        }
+      }
+    });
+  });
+  observer.observe(modal, { attributes: true });
 });
+</script>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyA_2Lh01cJbkoCCr2XbpFYC-rHIiq6PmNQ",
+    authDomain: "ai-life-assistant-c9b14.firebaseapp.com",
+    projectId: "ai-life-assistant-c9b14",
+    storageBucket: "ai-life-assistant-c9b14.firebasestorage.app",
+    messagingSenderId: "231851528102",
+    appId: "1:231851528102:web:9179548ec72a84548ec967"
+  };
+
+  import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth();
+  const db = getFirestore(app);
+
+  // ── Save all user data to Firestore ──────────────
+  window.saveToFirestore = async () => {
+    const user = auth.currentUser;
+    if (!user) return;
+    try {
+      await setDoc(doc(db, 'users', user.uid), {
+        tasks: S.tasks,
+        apts: S.apts,
+        exps: S.exps,
+        rems: S.rems,
+        health: S.health,
+        drafts: S.drafts,
+        updatedAt: new Date().toISOString()
+      });
+    } catch (e) {
+      console.error('Save error:', e);
+    }
+  };
+
+  // ── Load user data from Firestore ─────────────────
+  async function loadFromFirestore(uid) {
+    try {
+      const snap = await getDoc(doc(db, 'users', uid));
+      if (snap.exists()) {
+        const data = snap.data();
+        if (data.tasks)  S.tasks  = data.tasks;
+        if (data.apts)   S.apts   = data.apts;
+        if (data.exps)   S.exps   = data.exps;
+        if (data.rems)   S.rems   = data.rems;
+        if (data.health) S.health = data.health;
+        if (data.drafts) S.drafts = data.drafts;
+        if (data.pro)    updatePlanUI(true);
+      }
+      // Re-render everything with loaded data
+      renderTasks(); renderApts(); renderEmails(); renderExps(); renderRems();
+      renderDrafts();
+      updateHealthDisplay();
+    } catch (e) {
+      console.error('Load error:', e);
+    }
+  }
+
+  // ── Auth guard + load data on login ──────────────
+  onAuthStateChanged(auth, async (firebaseUser) => {
+    if (!firebaseUser) {
+      window.location.href = '/AI-Life-Assistant/home.html';
+    } else {
+      await loadFromFirestore(firebaseUser.uid);
+    }
+  });
 </script>
 
 <script type="module">
