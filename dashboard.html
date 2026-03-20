@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Outfit:wght@300;400;500;600&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
-  <script src="https://www.paypal.com/sdk/js?client-id=EHIBz-HkEa0ZsF_towTlOJ4BrFpMJAS7RuVIytjE6HjXG5UEQCrRAkMsyBKiHBuHEaVx7Tw4B1vro9t_&currency=GBP"></script>
+<script src="https://www.paypal.com/sdk/js?client-id=EHIBz-HkEa0ZsF_towTlOJ4BrFpMJAS7RuVIytjE6HjXG5UEQCrRAkMsyBKiHBuHEaVx7Tw4B1vro9t_&currency=GBP"></script>
 <style>
 :root {
   --void:#080a08; --ink:#0e1210; --surface:#131814; --surface-2:#181f19; --surface-3:#1e2820;
@@ -634,15 +634,10 @@ select option{background:var(--surface-3);}
 </div>
 <div id="toasts"></div>
 
-<!-- Replace everything from after the UPGRADE MODAL section to the end with this -->
-
 <script>
 // ═══════ CONFIG ═══════
 const API = 'https://backed-1-837p.onrender.com';
-
-// ═══════ USER INFO ═══════
 const user = JSON.parse(localStorage.getItem('lifeai_user') || 'null');
-const token = true; // Firebase handles auth
 
 // ═══════ STATE ═══════
 const S = {
@@ -668,7 +663,6 @@ function initDate(){
   document.getElementById('tdate').textContent=n.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
   document.getElementById('ph-date').textContent=n.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});
   document.getElementById('cwt').textContent=n.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
-  // Update greeting
   const greetEl = document.querySelector('.ph-h');
   if(greetEl) greetEl.innerHTML = `${greeting.split(' ')[0]} <em>${greeting.split(' ')[1]}</em>`;
 }
@@ -682,18 +676,16 @@ function toggleLogout() {
 window.onclick = function(event) {
   if (!event.target.matches('.av')) {
     const dropdown = document.getElementById('logoutDropdown');
-    if (dropdown.classList.contains('show')) {
+    if (dropdown && dropdown.classList.contains('show')) {
       dropdown.classList.remove('show');
     }
   }
-  // Also handle modal click outside
   if (event.target.id === 'upgradeModal') hideUpgradeModal();
 }
 
 function logout() {
   localStorage.removeItem('lifeai_user');
   toast('Signed out successfully', 'ok');
-  // Firebase sign out
   import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js").then(({ getAuth, signOut }) => {
     signOut(getAuth()).then(() => {
       setTimeout(() => {
@@ -719,17 +711,15 @@ function toast(m,t='ok'){
   setTimeout(()=>{el.style.transition='all .28s';el.style.opacity='0';el.style.transform='translateX(110%)';setTimeout(()=>el.remove(),300);},3400);
 }
 
-// ═══════ API CALL WITH AUTH ═══════
+// ═══════ API CALL ═══════
 async function post(ep, body){
   try{
-    // Backend routes use /chat not /api/chat — strip the /api prefix
     const cleanEp = ep.replace('/api/', '/');
     const r = await fetch(API + cleanEp, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
     });
-    
     if (!r.ok) throw new Error('HTTP ' + r.status);
     return await r.json();
   }
@@ -738,30 +728,135 @@ async function post(ep, body){
   }
 }
 
-// ═══════ FITNESS DATA COLLECTOR ═══════
-function getFitnessContext() {
-  const stepsCurrent = S.health.steps||0, stepsGoal = 10000;
-  const waterCurrent = S.health.water||0, waterGoal = 2.0;
-  const sleepCurrent = S.health.sleep||0, sleepGoal = 8;
-  const mindfulnessCurrent = S.health.mind||0, mindfulnessGoal = 20;
-  const activeReminders = S.rems.filter(r => r.on).map(r => ({ text: r.txt, time: r.tm }));
-  return {
-    steps: { current: stepsCurrent, goal: stepsGoal, progress: Math.round((stepsCurrent/stepsGoal)*100), remaining: stepsGoal - stepsCurrent },
-    water: { current: waterCurrent, goal: waterGoal, progress: Math.round((waterCurrent/waterGoal)*100), unit: 'L', remaining: (waterGoal - waterCurrent).toFixed(1) },
-    sleep: { current: sleepCurrent, goal: sleepGoal, progress: Math.round((sleepCurrent/sleepGoal)*100), unit: 'hours', remaining: (sleepGoal - sleepCurrent).toFixed(1) },
-    mindfulness: { current: mindfulnessCurrent, goal: mindfulnessGoal, progress: Math.round((mindfulnessCurrent/mindfulnessGoal)*100), unit: 'min', remaining: mindfulnessGoal - mindfulnessCurrent },
-    reminders: activeReminders,
-    weeklyActivity: [72, 55, 88, 64, 91, 45, 62],
-    tasks: { completed: S.tasks.filter(t => t.done).length, pending: S.tasks.filter(t => !t.done).length, total: S.tasks.length }
-  };
+// ═══════ PLAN STATE ═══════
+let isPro = false;
+const FREE_LIMITS = { tasks: 10, apts: 3, chats: 5 };
+let todayChatCount = parseInt(localStorage.getItem('lifeai_chats_' + new Date().toDateString()) || '0');
+
+function checkLimit(type) {
+  if (isPro) return true;
+  if (type === 'tasks' && S.tasks.length >= FREE_LIMITS.tasks) {
+    toast(`Free plan: max ${FREE_LIMITS.tasks} tasks. Upgrade to Pro for unlimited!`, 'er');
+    showUpgradeModal(); return false;
+  }
+  if (type === 'apts' && S.apts.length >= FREE_LIMITS.apts) {
+    toast(`Free plan: max ${FREE_LIMITS.apts} appointments. Upgrade to Pro!`, 'er');
+    showUpgradeModal(); return false;
+  }
+  if (type === 'chats' && todayChatCount >= FREE_LIMITS.chats) {
+    toast(`Free plan: ${FREE_LIMITS.chats} AI chats/day. Upgrade to Pro for unlimited!`, 'er');
+    showUpgradeModal(); return false;
+  }
+  if (type === 'drafts') {
+    toast('Saving drafts is a Pro feature. Upgrade to unlock!', 'er');
+    showUpgradeModal(); return false;
+  }
+  return true;
 }
 
-// ═══════ FITNESS KEYWORDS ═══════
-const fitnessKeywords = ['step','walk','run','exercise','workout','fitness','water','drink','hydrat','sleep','rest','nap','mindful','meditat','stress','health','healthy','remind','reminder','activity','active','goal','progress','track','trend'];
+function showUpgradeModal() {
+  const modal = document.getElementById('upgradeModal');
+  modal.style.display = 'flex';
+  const container = document.getElementById('paypal-button-container');
+  container.innerHTML = '';
+  paypalRendered = false;
+  setTimeout(() => renderPayPalButton(), 200);
+}
 
-function isFitnessQuery(text) {
-  const lowerText = text.toLowerCase();
-  return fitnessKeywords.some(keyword => lowerText.includes(keyword));
+function hideUpgradeModal() {
+  document.getElementById('upgradeModal').style.display = 'none';
+}
+
+function updatePlanUI(pro) {
+  isPro = pro;
+  document.getElementById('plan-free').style.display = pro ? 'none' : 'block';
+  document.getElementById('plan-pro').style.display  = pro ? 'block' : 'none';
+}
+
+let paypalRendered = false;
+
+function renderPayPalButton() {
+  if (paypalRendered) return;
+  
+  if (typeof paypal === 'undefined') {
+    console.error('PayPal SDK not loaded yet, retrying...');
+    setTimeout(() => renderPayPalButton(), 500);
+    return;
+  }
+  
+  paypalRendered = true;
+  
+  try {
+    paypal.Buttons({
+      style: { 
+        layout: 'vertical', 
+        color: 'gold', 
+        shape: 'rect', 
+        label: 'paypal',
+        height: 45
+      },
+      createOrder: (data, actions) => {
+        return actions.order.create({
+          purchase_units: [{ 
+            amount: { value: '6.99', currency_code: 'GBP' }, 
+            description: 'LifeAI Pro Monthly Subscription'
+          }],
+          application_context: {
+            shipping_preference: 'NO_SHIPPING',
+            user_action: 'PAY_NOW'
+          }
+        });
+      },
+      onApprove: async (data, actions) => {
+        try {
+          const order = await actions.order.capture();
+          if (order.status === 'COMPLETED') {
+            await activatePro();
+            toast('Payment successful! Welcome to Pro! 🎉', 'ok');
+          }
+        } catch (err) {
+          console.error('Capture error:', err);
+          toast('Payment processing failed. Please try again.', 'er');
+        }
+      },
+      onError: (err) => {
+        console.error('PayPal error:', err);
+        toast('Payment failed — please try again', 'er');
+        paypalRendered = false;
+      },
+      onCancel: () => {
+        toast('Payment cancelled', 'in');
+        paypalRendered = false;
+      }
+    }).render('#paypal-button-container');
+  } catch (err) {
+    console.error('PayPal render error:', err);
+    document.getElementById('paypal-button-container').innerHTML = 
+      '<div style="color:var(--danger);font-size:.8rem;text-align:center;padding:12px;">⚠️ Unable to load PayPal. Please refresh and try again.</div>';
+    paypalRendered = false;
+  }
+}
+
+async function activatePro() {
+  try {
+    const { getFirestore, doc, updateDoc } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
+    const { getApp } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
+    const { getAuth } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+
+    const fbUser = getAuth(getApp()).currentUser;
+    if (!fbUser) return;
+
+    const db = getFirestore(getApp());
+    await updateDoc(doc(db, 'users', fbUser.uid), { pro: true, proSince: new Date().toISOString() });
+
+    hideUpgradeModal();
+    updatePlanUI(true);
+    toast('Welcome to Pro! 🎉 All features unlocked.', 'ok');
+  } catch (err) {
+    console.error('Pro activation error:', err);
+    updatePlanUI(true);
+    hideUpgradeModal();
+  }
 }
 
 // ═══════ TASKS ═══════
@@ -774,7 +869,8 @@ function renderTasks(){
     el.appendChild(d);
   });
   const p=S.tasks.filter(t=>!t.done).length;
-  ['nb-t','kv-tasks'].forEach(i=>{const e=document.getElementById(i);if(e)e.textContent=p;});
+  const nbEl=document.getElementById('nb-t');if(nbEl)nbEl.textContent=p;
+  const kvEl=document.getElementById('kv-tasks');if(kvEl)kvEl.textContent=p;
   const done=S.tasks.filter(t=>t.done).length,tot=S.tasks.length;
   const sfb=document.getElementById('sf-t');if(sfb)sfb.style.width=Math.round(done/Math.max(tot,1)*100)+'%';
   const sfv=document.getElementById('sf-tv');if(sfv)sfv.textContent=done+'/'+tot;
@@ -807,177 +903,20 @@ async function bookApt(){
   if(!title||!dt){toast('Title and date/time required','er');return;}
   S.apts.push({id:Date.now(),title,dt,loc,notes});renderApts();
   if(window.saveToFirestore) saveToFirestore();
-  const r=await post('/api/appointments',{title,datetime:dt,location:loc,notes});
-  toast(r._e?'Saved locally (backend offline)':'Appointment booked! 📅');
+  toast('Appointment booked! 📅');
   ['a-title','a-dt','a-loc','a-notes'].forEach(id=>document.getElementById(id).value='');
 }
 function syncCal(){toast('Syncing Google Calendar…','in');setTimeout(()=>toast('Calendar synced ✓'),1800);}
 
-// ═══════ PLAN STATE ═══════
-let isPro = false;
-const FREE_LIMITS = { tasks: 10, apts: 3, chats: 5 };
-let todayChatCount = parseInt(localStorage.getItem('lifeai_chats_' + new Date().toDateString()) || '0');
-
-function checkLimit(type) {
-  if (isPro) return true;
-  if (type === 'tasks' && S.tasks.length >= FREE_LIMITS.tasks) {
-    toast(`Free plan: max ${FREE_LIMITS.tasks} tasks. Upgrade to Pro for unlimited!`, 'er');
-    showUpgradeModal(); return false;
-  }
-  if (type === 'apts' && S.apts.length >= FREE_LIMITS.apts) {
-    toast(`Free plan: max ${FREE_LIMITS.apts} appointments. Upgrade to Pro!`, 'er');
-    showUpgradeModal(); return false;
-  }
-  if (type === 'chats' && todayChatCount >= FREE_LIMITS.chats) {
-    toast(`Free plan: ${FREE_LIMITS.chats} AI chats/day. Upgrade to Pro for unlimited!`, 'er');
-    showUpgradeModal(); return false;
-  }
-  if (type === 'drafts') {
-    toast('Saving drafts is a Pro feature. Upgrade to unlock!', 'er');
-    showUpgradeModal(); return false;
-  }
-  return true;
-}
-
-function showUpgradeModal() {
-  const modal = document.getElementById('upgradeModal');
-  modal.style.display = 'flex';
-  // Clear the container and re-render button
-  const container = document.getElementById('paypal-button-container');
-  container.innerHTML = '';
-  paypalRendered = false;
-  // Small delay to ensure DOM is ready
-  setTimeout(() => renderPayPalButton(), 100);
-}
-
-function hideUpgradeModal() {
-  document.getElementById('upgradeModal').style.display = 'none';
-}
-
-function updatePlanUI(pro) {
-  isPro = pro;
-  document.getElementById('plan-free').style.display = pro ? 'none' : 'block';
-  document.getElementById('plan-pro').style.display  = pro ? 'block' : 'none';
-}
-
-let paypalRendered = false;
-
-function renderPayPalButton() {
-  if (paypalRendered) return;
-  
-  // Check if PayPal SDK is loaded
-  if (typeof paypal === 'undefined') {
-    console.error('PayPal SDK not loaded');
-    document.getElementById('paypal-button-container').innerHTML = 
-      '<div style="color:var(--danger);font-size:.8rem;text-align:center;padding:12px;">⚠️ PayPal failed to load. Please check your connection and try again.</div>';
-    return;
-  }
-  
-  paypalRendered = true;
-  
-  try {
-    paypal.Buttons({
-      style: { 
-        layout: 'vertical', 
-        color: 'gold', 
-        shape: 'rect', 
-        label: 'subscribe',
-        height: 45
-      },
-      createOrder: (data, actions) => {
-        return actions.order.create({
-          purchase_units: [{ 
-            amount: { value: '6.99', currency_code: 'GBP' }, 
-            description: 'LifeAI Pro — Monthly Subscription'
-          }],
-          application_context: {
-            shipping_preference: 'NO_SHIPPING',
-            user_action: 'PAY_NOW'
-          }
-        });
-      },
-      onApprove: async (data, actions) => {
-        try {
-          const order = await actions.order.capture();
-          if (order.status === 'COMPLETED') {
-            await activatePro();
-            toast('Payment successful! Welcome to Pro! 🎉', 'ok');
-          } else {
-            toast('Payment was not completed. Please try again.', 'er');
-          }
-        } catch (err) {
-          console.error('Capture error:', err);
-          toast('Payment processing failed. Please try again.', 'er');
-        }
-      },
-      onError: (err) => {
-        console.error('PayPal error:', err);
-        toast('Payment failed — please check your connection and try again', 'er');
-        paypalRendered = false; // Allow retry
-      },
-      onCancel: () => {
-        toast('Payment cancelled', 'in');
-        paypalRendered = false; // Allow retry
-      }
-    }).render('#paypal-button-container');
-  } catch (err) {
-    console.error('PayPal render error:', err);
-    document.getElementById('paypal-button-container').innerHTML = 
-      '<div style="color:var(--danger);font-size:.8rem;text-align:center;padding:12px;">⚠️ Unable to load PayPal. Please refresh and try again.</div>';
-    paypalRendered = false;
-  }
-}
-
-async function activatePro() {
-  // Save Pro status to Firestore
-  try {
-    const { getFirestore, doc, updateDoc } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
-    const { getApp } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
-    const { getAuth } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
-
-    const fbUser = getAuth(getApp()).currentUser;
-    if (!fbUser) {
-      console.error('No user logged in');
-      return;
-    }
-
-    const db = getFirestore(getApp());
-    await updateDoc(doc(db, 'users', fbUser.uid), { 
-      pro: true, 
-      proSince: new Date().toISOString() 
-    });
-
-    hideUpgradeModal();
-    updatePlanUI(true);
-    toast('Welcome to Pro! 🎉 All features unlocked.', 'ok');
-  } catch (err) {
-    console.error('Pro activation error:', err);
-    toast('Pro activated but please refresh the page.', 'in');
-    updatePlanUI(true);
-    hideUpgradeModal();
-  }
-}
-
-// Ensure PayPal renders when modal opens
-document.addEventListener('DOMContentLoaded', () => {
-  // Pre-load the PayPal button container with a placeholder
-  const container = document.getElementById('paypal-button-container');
-  if (container) {
-    container.innerHTML = '<div style="text-align:center;padding:12px;color:var(--text-3);">Loading PayPal...</div>';
-  }
-});
-
-function renderEmails(){ /* Gmail removed — email drafter only */ }
-
+// ═══════ EMAIL ═══════
 async function draftEmail(){
   const to=document.getElementById('e-to').value.trim(),sub=document.getElementById('e-sub').value.trim(),pts=document.getElementById('e-pts').value.trim(),tone=document.getElementById('e-tone').value;
   if(!pts){toast('Describe what the email should say','er');return;}
   const out=document.getElementById('email-out');out.style.display='block';out.textContent='Composing…';out.classList.add('streaming');
   const r=await post('/api/draft-email',{to,subject:sub,points:pts,tone});
   out.classList.remove('streaming');
-  out.textContent=r._e?`Subject: ${sub||'Re: Your message'}\n\nDear ${to||'recipient'},\n\nI hope this message finds you well.\n\n${pts}\n\nPlease let me know if you have any questions.\n\nKind regards,\n[Your Name]`:r.draft;
+  out.textContent=r._e?`Subject: ${sub||'Re: Your message'}\n\nDear ${to||'recipient'},\n\n${pts}\n\nKind regards,\n[Your Name]`:r.draft;
   toast('Email draft ready ✓');
-  // Show Save Draft button
   document.getElementById('save-draft-btn').style.display='block';
 }
 
@@ -1004,11 +943,8 @@ function saveDraft(){
 function renderDrafts(){
   const el=document.getElementById('drafts-list');
   if(!el)return;
-  // Update dashboard KPI
   const kpiEl=document.getElementById('kv-mails');
   if(kpiEl) kpiEl.textContent=S.drafts.length;
-  const nbEl=document.getElementById('nb-e');
-  if(nbEl) nbEl.textContent=S.drafts.length;
 
   el.innerHTML='';
   if(S.drafts.length===0){
@@ -1045,8 +981,6 @@ function loadDraft(id){
   out.textContent=d.content;
   document.getElementById('save-draft-btn').style.display='none';
   toast('Draft loaded ✓');
-  // Scroll to drafter
-  document.getElementById('email-out').scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 
 function deleteDraft(id){
@@ -1069,22 +1003,15 @@ function renderExps(){
 }
 function updateFinanceCards(){
   const total = S.exps.reduce((s,e)=>s+parseFloat(e.amt),0);
-
-  // This week — expenses added in the last 7 days
   const now = Date.now();
   const weekAgo = now - 7*24*60*60*1000;
   const weekTotal = S.exps.filter(e=>e.id>=weekAgo).reduce((s,e)=>s+parseFloat(e.amt),0);
-
-  // Monthly budget card
   const budget = 2400;
   const pct = Math.min(Math.round(total/budget*100),100);
   const budgetEl = document.querySelector('.card .pf');
   if(budgetEl) budgetEl.style.width = pct+'%';
   const budgetCards = document.querySelectorAll('.card .p-lbls');
   if(budgetCards[0]) budgetCards[0].innerHTML = `<span>£${total.toFixed(2)} spent</span><span>£${Math.max(budget-total,0).toFixed(2)} left</span>`;
-  const budgetVal = document.querySelector('.card .c-eye + div');
-
-  // Update This Week card
   const weekCard = document.querySelectorAll('.g3 .card')[1];
   if(weekCard){
     const valEl = weekCard.querySelector('div[style*="font-size:1.9rem"]');
@@ -1092,9 +1019,6 @@ function updateFinanceCards(){
     const subEl = weekCard.querySelector('div[style*="font-size:.72rem"]');
     if(subEl) subEl.textContent = weekTotal > 0 ? `£${weekTotal.toFixed(2)} this week` : 'No transactions yet';
   }
-
-  // Update KPI card
-  const kpiVal = document.getElementById('kv-tasks'); // reuse pattern for spend kpi
   const spendKpi = document.querySelector('.kpi:last-child .kpi-val');
   if(spendKpi) spendKpi.textContent = `£${weekTotal.toFixed(0)}`;
 }
@@ -1120,7 +1044,7 @@ async function finSum(){
   const out=document.getElementById('fin-out');out.style.display='block';out.textContent='Analysing your finances…';out.classList.add('streaming');
   const r=await post('/api/finance-summary',{expenses:S.exps});
   out.classList.remove('streaming');
-  if(r._e){const tot=S.exps.reduce((s,e)=>s+parseFloat(e.amt),0);const top=[...S.exps].sort((a,b)=>b.amt-a.amt)[0];out.textContent=`📊 Finance Summary\n\nTotal tracked: £${tot.toFixed(2)}\nLargest expense: ${top.desc} (£${top.amt})\n\nYou're spending most on ${top.cat}. Consider reviewing subscriptions and setting a weekly cap. Your savings rate of 23% is close to the 25% target — keep it up!`;}
+  if(r._e){const tot=S.exps.reduce((s,e)=>s+parseFloat(e.amt),0);const top=[...S.exps].sort((a,b)=>b.amt-a.amt)[0];out.textContent=`📊 Finance Summary\n\nTotal tracked: £${tot.toFixed(2)}\nLargest expense: ${top.desc} (£${top.amt})\n\nYou're spending most on ${top.cat}. Consider reviewing subscriptions.`;}
   else out.textContent=r.summary;
 }
 
@@ -1143,27 +1067,20 @@ function animateRings(){
 }
 
 function updateHealthDisplay(){
-  const goals={steps:10000,water:2,sleep:8,mind:20};
   const vals={steps:S.health.steps,water:S.health.water,sleep:S.health.sleep,mind:S.health.mind};
   const displays={steps:'rv-steps',water:'rv-water',sleep:'rv-sleep',mind:'rv-mind'};
-
   Object.keys(vals).forEach(key=>{
     const el=document.getElementById(displays[key]);
     if(el) el.textContent = key==='water' ? parseFloat(vals[key]).toFixed(1) : vals[key];
   });
-
-  // Update sidebar water
   const sfWater=document.querySelector('.sf-r:nth-child(3) .sf-bf');
   const sfWaterVal=document.querySelector('.sf-r:nth-child(3) .sf-v');
   if(sfWater) sfWater.style.width=Math.min(S.health.water/2*100,100)+'%';
   if(sfWaterVal) sfWaterVal.textContent=S.health.water.toFixed(1)+'L';
-
-  // Update sidebar steps
   const sfSteps=document.querySelector('.sf-r:nth-child(2) .sf-bf');
   const sfStepsVal=document.querySelector('.sf-r:nth-child(2) .sf-v');
   if(sfSteps) sfSteps.style.width=Math.min(S.health.steps/10000*100,100)+'%';
   if(sfStepsVal) sfStepsVal.textContent=Math.round(S.health.steps/10000*100)+'%';
-
   animateRings();
 }
 
@@ -1173,21 +1090,18 @@ function openHealthLog(metric){
   const card = document.getElementById('health-log-card');
   card.style.display = 'block';
   card.scrollIntoView({behavior:'smooth',block:'nearest'});
-
   const configs = {
-    steps: { label:'Steps today', hint:'e.g. 6500', eye:'Log Steps', max:50000 },
-    water: { label:'Water (litres)', hint:'e.g. 1.5', eye:'Log Hydration', max:10 },
-    sleep: { label:'Sleep (hours)', hint:'e.g. 7.5', eye:'Log Sleep', max:24 },
-    mind:  { label:'Mindfulness (minutes)', hint:'e.g. 15', eye:'Log Mindfulness', max:180 },
+    steps: { label:'Steps today', hint:'e.g. 6500', eye:'Log Steps' },
+    water: { label:'Water (litres)', hint:'e.g. 1.5', eye:'Log Hydration' },
+    sleep: { label:'Sleep (hours)', hint:'e.g. 7.5', eye:'Log Sleep' },
+    mind:  { label:'Mindfulness (minutes)', hint:'e.g. 15', eye:'Log Mindfulness' },
   };
   const c = configs[metric];
   document.getElementById('health-log-eye').textContent = c.eye;
   document.getElementById('health-log-label').textContent = c.label;
   document.getElementById('health-log-val').placeholder = c.hint;
-  document.getElementById('health-log-val').max = c.max;
   document.getElementById('health-log-val').value = S.health[metric] || '';
   document.getElementById('health-log-hint').textContent = `Current: ${S.health[metric] || 0} · ${c.hint}`;
-  document.getElementById('health-log-val').focus();
 }
 
 function saveHealthLog(){
@@ -1235,7 +1149,7 @@ async function planDay(){
   const out=document.getElementById('plan-out');out.textContent='Planning your day…';out.classList.add('streaming');
   const r=await post('/api/plan-day',{tasks:S.tasks.filter(t=>!t.done).map(t=>({name:t.name,priority:t.prio})),appointments:S.apts.map(a=>({title:a.title,datetime:a.dt}))});
   out.classList.remove('streaming');
-  out.textContent=r._e?`🌅 Here's your optimised day:\n\n08:30 — Deep work: Review project proposal (high priority)\n10:00 — Quick break + water 💧\n11:00 — Pay electricity bill (10 min)\n12:00 — Email triage\n13:00 — Lunch + 20-min walk 🚶\n15:00 — GP check-up appointment\n16:30 — Review Q3 financials\n17:30 — Wind down, prep tomorrow\n\nFocus on the high-priority items first thing — you've got this! 💪`:r.plan;
+  out.textContent=r._e?`🌅 Here's your optimised day:\n\n08:30 — Deep work: Review project proposal\n10:00 — Quick break + water 💧\n11:00 — Pay electricity bill\n12:00 — Email triage\n13:00 — Lunch + 20-min walk 🚶\n15:00 — GP check-up appointment\n16:30 — Review Q3 financials\n17:30 — Wind down, prep tomorrow\n\nFocus on the high-priority items first! 💪`:r.plan;
   toast('Day plan ready ✓');
 }
 
@@ -1246,7 +1160,7 @@ function appendMsg(role,text){
   div.innerHTML=`<div class="m-av">${role==='ai'?'AI':'U'}</div><div><div class="m-bub">${text.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')}</div><div class="m-time">${now}</div></div>`;
   c.appendChild(div);c.scrollTop=c.scrollHeight;
 }
-function setTyp(v){document.getElementById('typing').classList.toggle('on',v);document.getElementById('chat-msgs').scrollTop=99999;}
+function setTyp(v){document.getElementById('typing').classList.toggle('on',v);}
 
 async function sendChat(){
   if(!checkLimit('chats')) return;
@@ -1256,25 +1170,17 @@ async function sendChat(){
   inp.value='';
   inp.style.height='auto';
   appendMsg('user',txt);
-  const hasFitnessContext = isFitnessQuery(txt);
-  let messageToSend = txt;
-  if (hasFitnessContext) {
-    const fc = getFitnessContext();
-    messageToSend = `[FITNESS DATA - Steps: ${fc.steps.current}/${fc.steps.goal} (${fc.steps.progress}%), Water: ${fc.water.current}L/${fc.water.goal}L, Sleep: ${fc.sleep.current}h/${fc.sleep.goal}h, Reminders: ${fc.reminders.length} active]\nUser asks: ${txt}`;
-  }
   setTyp(true);
   document.getElementById('sbtn').disabled=true;
-  const r = await post('/api/chat', { message: messageToSend, history: S.hist.slice(-10) });
+  const r = await post('/api/chat', { message: txt, history: S.hist.slice(-10) });
   setTyp(false);
   document.getElementById('sbtn').disabled=false;
   const rep = r._e ? `I can't reach the server right now. (Error: ${r.m})` : r.reply;
   appendMsg('ai', rep);
   S.hist.push({ role: 'assistant', content: rep });
-  // Track daily chat count for free users
   if (!isPro) {
     todayChatCount++;
     localStorage.setItem('lifeai_chats_' + new Date().toDateString(), todayChatCount);
-    // Show remaining chats hint
     const remaining = FREE_LIMITS.chats - todayChatCount;
     if (remaining <= 2 && remaining > 0) toast(`${remaining} free AI chat${remaining===1?'':'s'} remaining today`, 'in');
   }
@@ -1284,28 +1190,20 @@ function qs(t){ document.getElementById('cinput').value=t; sendChat(); }
 
 // ═══════ INIT ═══════
 document.addEventListener('DOMContentLoaded',()=>{
-  renderTasks();renderApts();renderEmails();renderExps();renderRems();renderActBars();renderDrafts();
-  setTimeout(()=>{
-    updateHealthDisplay();
-  },600);
+  renderTasks();renderApts();renderExps();renderRems();renderActBars();renderDrafts();
+  setTimeout(()=> updateHealthDisplay(), 600);
   const ta=document.getElementById('cinput');
   ta.addEventListener('input',()=>{ta.style.height='auto';ta.style.height=Math.min(ta.scrollHeight,130)+'px';});
   ta.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat();}});
   if (user && user.fullName) {
     const av = document.querySelector('.av');
-    if (av) {
-      av.innerHTML = user.fullName.charAt(0).toUpperCase() + '<div class="logout-dropdown" id="logoutDropdown"><div onclick="logout()">🚪 Sign Out</div></div>';
-    }
+    if (av) av.innerHTML = user.fullName.charAt(0).toUpperCase() + '<div class="logout-dropdown" id="logoutDropdown"><div onclick="logout()">🚪 Sign Out</div></div>';
   }
-  
-  // Ensure PayPal button is ready when modal opens
   const modal = document.getElementById('upgradeModal');
   const observer = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
-      if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
-        if (modal.style.display === 'flex') {
-          setTimeout(() => renderPayPalButton(), 150);
-        }
+      if (mutation.type === 'attributes' && mutation.attributeName === 'style' && modal.style.display === 'flex') {
+        setTimeout(() => renderPayPalButton(), 150);
       }
     });
   });
@@ -1315,7 +1213,8 @@ document.addEventListener('DOMContentLoaded',()=>{
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyA_2Lh01cJbkoCCr2XbpFYC-rHIiq6PmNQ",
@@ -1326,13 +1225,10 @@ document.addEventListener('DOMContentLoaded',()=>{
     appId: "1:231851528102:web:9179548ec72a84548ec967"
   };
 
-  import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
   const app = initializeApp(firebaseConfig);
   const auth = getAuth();
   const db = getFirestore(app);
 
-  // ── Save all user data to Firestore ──────────────
   window.saveToFirestore = async () => {
     const user = auth.currentUser;
     if (!user) return;
@@ -1346,12 +1242,9 @@ document.addEventListener('DOMContentLoaded',()=>{
         drafts: S.drafts,
         updatedAt: new Date().toISOString()
       });
-    } catch (e) {
-      console.error('Save error:', e);
-    }
+    } catch (e) { console.error('Save error:', e); }
   };
 
-  // ── Load user data from Firestore ─────────────────
   async function loadFromFirestore(uid) {
     try {
       const snap = await getDoc(doc(db, 'users', uid));
@@ -1365,90 +1258,14 @@ document.addEventListener('DOMContentLoaded',()=>{
         if (data.drafts) S.drafts = data.drafts;
         if (data.pro)    updatePlanUI(true);
       }
-      // Re-render everything with loaded data
-      renderTasks(); renderApts(); renderEmails(); renderExps(); renderRems();
-      renderDrafts();
+      renderTasks(); renderApts(); renderExps(); renderRems(); renderDrafts();
       updateHealthDisplay();
-    } catch (e) {
-      console.error('Load error:', e);
-    }
+    } catch (e) { console.error('Load error:', e); }
   }
 
-  // ── Auth guard + load data on login ──────────────
   onAuthStateChanged(auth, async (firebaseUser) => {
     if (!firebaseUser) {
       window.location.href = '/AI-Life-Assistant/home.html';
-    } else {
-      await loadFromFirestore(firebaseUser.uid);
-    }
-  });
-</script>
-
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyA_2Lh01cJbkoCCr2XbpFYC-rHIiq6PmNQ",
-    authDomain: "ai-life-assistant-c9b14.firebaseapp.com",
-    projectId: "ai-life-assistant-c9b14",
-    storageBucket: "ai-life-assistant-c9b14.firebasestorage.app",
-    messagingSenderId: "231851528102",
-    appId: "1:231851528102:web:9179548ec72a84548ec967"
-  };
-
-  import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth();
-  const db = getFirestore(app);
-
-  // ── Save all user data to Firestore ──────────────
-  window.saveToFirestore = async () => {
-    const user = auth.currentUser;
-    if (!user) return;
-    try {
-      await setDoc(doc(db, 'users', user.uid), {
-        tasks: S.tasks,
-        apts: S.apts,
-        exps: S.exps,
-        rems: S.rems,
-        health: S.health,
-        drafts: S.drafts,
-        updatedAt: new Date().toISOString()
-      });
-    } catch (e) {
-      console.error('Save error:', e);
-    }
-  };
-
-  // ── Load user data from Firestore ─────────────────
-  async function loadFromFirestore(uid) {
-    try {
-      const snap = await getDoc(doc(db, 'users', uid));
-      if (snap.exists()) {
-        const data = snap.data();
-        if (data.tasks)  S.tasks  = data.tasks;
-        if (data.apts)   S.apts   = data.apts;
-        if (data.exps)   S.exps   = data.exps;
-        if (data.rems)   S.rems   = data.rems;
-        if (data.health) S.health = data.health;
-        if (data.drafts) S.drafts = data.drafts;
-        if (data.pro)    updatePlanUI(true);
-      }
-      // Re-render everything with loaded data
-      renderTasks(); renderApts(); renderEmails(); renderExps(); renderRems();
-      renderDrafts();
-      updateHealthDisplay();
-    } catch (e) {
-      console.error('Load error:', e);
-    }
-  }
-
-  // ── Auth guard + load data on login ──────────────
-  onAuthStateChanged(auth, async (firebaseUser) => {
-    if (!firebaseUser) {
-      window.location.href = 'index.html';
     } else {
       await loadFromFirestore(firebaseUser.uid);
     }
