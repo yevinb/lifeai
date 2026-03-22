@@ -860,30 +860,42 @@ function updatePlanUI(pro) {
 let paypalRendered = false;
 function renderPayPalButton() {
   if (paypalRendered) return;
-  if (typeof paypal === 'undefined') {
-    setTimeout(renderPayPalButton, 1000); // retry after 1s
-    return;
-  }
-  paypalRendered = true;
-  paypal.Buttons({
-    style: { layout: 'vertical', color: 'gold', shape: 'rect', label: 'subscribe' },
-    createSubscription: (data, actions) => {
-      return actions.subscription.create({
-        plan_id: 'P-7EW53343TE1951400NG64P3Y'
-      });
-    },
-    onApprove: async (data) => {
-      console.log('Subscription ID:', data.subscriptionID);
-      await activatePro(data.subscriptionID);
-    },
-    onError: (err) => {
-      console.error('PayPal error:', err);
-      toast('Payment failed — please try again', 'er');
-    },
-    onCancel: () => {
-      toast('Payment cancelled', 'in');
+  const container = document.getElementById('paypal-button-container');
+  container.innerHTML = '<div style="text-align:center;padding:16px;color:var(--text-3);font-size:.8rem;">Loading payment options…</div>';
+
+  let attempts = 0;
+  const tryRender = () => {
+    attempts++;
+    if (typeof paypal === 'undefined') {
+      if (attempts < 10) {
+        setTimeout(tryRender, 800);
+      } else {
+        container.innerHTML = '<div style="text-align:center;padding:12px;"><a href="https://www.paypal.com/webapps/billing/plans/subscribe?plan_id=P-7EW53343TE1951400NG64P3Y" target="_blank" style="display:inline-block;background:linear-gradient(135deg,#f5c842,#f0a500);color:#000;font-weight:600;padding:12px 24px;border-radius:8px;text-decoration:none;font-family:sans-serif;font-size:.9rem;">Subscribe with PayPal — £6.99/mo</a></div>';
+      }
+      return;
     }
-  }).render('#paypal-button-container');
+    paypalRendered = true;
+    paypal.Buttons({
+      style: { layout: 'vertical', color: 'gold', shape: 'rect', label: 'subscribe' },
+      createSubscription: (data, actions) => {
+        return actions.subscription.create({
+          plan_id: 'P-7EW53343TE1951400NG64P3Y'
+        });
+      },
+      onApprove: async (data) => {
+        await activatePro(data.subscriptionID);
+      },
+      onError: (err) => {
+        console.error('PayPal error:', err);
+        container.innerHTML = '<div style="text-align:center;padding:12px;"><a href="https://www.paypal.com/webapps/billing/plans/subscribe?plan_id=P-7EW53343TE1951400NG64P3Y" target="_blank" style="display:inline-block;background:linear-gradient(135deg,#f5c842,#f0a500);color:#000;font-weight:600;padding:12px 24px;border-radius:8px;text-decoration:none;font-family:sans-serif;font-size:.9rem;">Subscribe with PayPal — £6.99/mo</a></div>';
+      },
+      onCancel: () => { toast('Payment cancelled', 'in'); }
+    }).render('#paypal-button-container').catch(err => {
+      console.error('Render error:', err);
+      container.innerHTML = '<div style="text-align:center;padding:12px;"><a href="https://www.paypal.com/webapps/billing/plans/subscribe?plan_id=P-7EW53343TE1951400NG64P3Y" target="_blank" style="display:inline-block;background:linear-gradient(135deg,#f5c842,#f0a500);color:#000;font-weight:600;padding:12px 24px;border-radius:8px;text-decoration:none;font-family:sans-serif;font-size:.9rem;">Subscribe with PayPal — £6.99/mo</a></div>';
+    });
+  };
+  tryRender();
 }
 
 async function activatePro(subscriptionId) {
