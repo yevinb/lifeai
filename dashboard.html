@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Outfit:wght@300;400;500;600&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
-  <script src="https://www.paypal.com/sdk/js?client-id=EHIBz-HkEa0ZsF_towTlOJ4BrFpMJAS7RuVIytjE6HjXG5UEQCrRAkMsyBKiHBuHEaVx7Tw4B1vro9t_&currency=GBP"></script>
+  <script src="https://www.paypal.com/sdk/js?client-id=EHIBz-HkEa0ZsF_towTlOJ4BrFpMJAS7RuVIytjE6HjXG5UEQCrRAkMsyBKiHBuHEaVx7Tw4B1vro9t_&vault=true&intent=subscription&currency=GBP"></script>
 <style>
 :root {
   --void:#080a08; --ink:#0e1210; --surface:#131814; --surface-2:#181f19; --surface-3:#1e2820;
@@ -861,32 +861,32 @@ let paypalRendered = false;
 function renderPayPalButton() {
   if (paypalRendered) return;
   if (typeof paypal === 'undefined') {
-    document.getElementById('paypal-button-container').innerHTML = '<div style="color:var(--danger);font-size:.8rem;text-align:center;padding:12px;">PayPal failed to load. Please check your connection and try again.</div>';
+    setTimeout(renderPayPalButton, 1000); // retry after 1s
     return;
   }
   paypalRendered = true;
   paypal.Buttons({
-    style: { layout: 'vertical', color: 'gold', shape: 'rect', label: 'pay' },
-    createOrder: (data, actions) => {
-      return actions.order.create({
-        purchase_units: [{ amount: { value: '6.99', currency_code: 'GBP' }, description: 'LifeAI Pro — Monthly' }]
+    style: { layout: 'vertical', color: 'gold', shape: 'rect', label: 'subscribe' },
+    createSubscription: (data, actions) => {
+      return actions.subscription.create({
+        plan_id: 'P-7EW53343TE1951400NG64P3Y'
       });
     },
-    onApprove: async (data, actions) => {
-      const order = await actions.order.capture();
-      if (order.status === 'COMPLETED') {
-        await activatePro();
-      }
+    onApprove: async (data) => {
+      console.log('Subscription ID:', data.subscriptionID);
+      await activatePro(data.subscriptionID);
     },
     onError: (err) => {
       console.error('PayPal error:', err);
       toast('Payment failed — please try again', 'er');
+    },
+    onCancel: () => {
+      toast('Payment cancelled', 'in');
     }
   }).render('#paypal-button-container');
 }
 
-async function activatePro() {
-  // Save Pro status to Firestore
+async function activatePro(subscriptionId) {
   const { getFirestore, doc, updateDoc } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
   const { getApp } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
   const { getAuth } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
@@ -895,7 +895,11 @@ async function activatePro() {
   if (!fbUser) return;
 
   const db = getFirestore(getApp());
-  await updateDoc(doc(db, 'users', fbUser.uid), { pro: true, proSince: new Date().toISOString() });
+  await updateDoc(doc(db, 'users', fbUser.uid), {
+    pro: true,
+    proSince: new Date().toISOString(),
+    subscriptionId: subscriptionId || null
+  });
 
   hideUpgradeModal();
   updatePlanUI(true);
