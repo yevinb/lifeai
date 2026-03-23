@@ -2,6 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="theme-color" content="#c9a84c">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="LifeAI">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LifeAI — Your Intelligent Personal Assistant</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -393,6 +399,15 @@
       document.getElementById('modal-subtitle').textContent = 'Reset your password';
     }
     window.onclick = e => { if (e.target.classList.contains('modal-overlay')) closeModal(); };
+  </script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/lifeai/sw.js')
+          .then(r => console.log('SW registered'))
+          .catch(e => console.log('SW error:', e));
+      });
+    }
   </script>
 </body>
 </html>
