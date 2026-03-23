@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Outfit:wght@300;400;500;600&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
-  <script src="https://www.paypal.com/sdk/js?client-id=Ad4bBlTsY5o_q0MS9sYToZcCjCg3dXaFmpepeDyjiH2DNBvl3On8H6Dfsm4-FwHXFbJCaPj8S-vdePnO&vault=true&intent=subscription&currency=GBP"></script>
+  <script src="https://www.paypal.com/sdk/js?client-id=AVpxNsZy3RyB2_QVnjTxQSYi7nDCUyOrMIvQeJau6JtRh5zM-oCuDzkkWDQqrRSIvuz6P4h4SooVS5PY&vault=true&intent=subscription&currency=GBP"></script>
 <style>
 :root {
   --void:#080a08; --ink:#0e1210; --surface:#131814; --surface-2:#181f19; --surface-3:#1e2820;
@@ -870,7 +870,7 @@ function renderPayPalButton() {
       if (attempts < 10) {
         setTimeout(tryRender, 800);
       } else {
-        container.innerHTML = '<div style="text-align:center;padding:12px;"><a href="https://www.paypal.com/webapps/billing/plans/subscribe?plan_id=P-7EW53343TE1951400NG64P3Y" target="_blank" style="display:inline-block;background:linear-gradient(135deg,#f5c842,#f0a500);color:#000;font-weight:600;padding:12px 24px;border-radius:8px;text-decoration:none;font-family:sans-serif;font-size:.9rem;">Subscribe with PayPal — £6.99/mo</a></div>';
+        container.innerHTML = '<div style="text-align:center;padding:12px;"><a href="https://www.paypal.com/webapps/billing/plans/subscribe?plan_id=P-1B949881T1828104GNHA3CUY" target="_blank" style="display:inline-block;background:linear-gradient(135deg,#f5c842,#f0a500);color:#000;font-weight:600;padding:12px 24px;border-radius:8px;text-decoration:none;font-family:sans-serif;font-size:.9rem;">Subscribe with PayPal — £6.99/mo</a></div>';
       }
       return;
     }
@@ -879,7 +879,7 @@ function renderPayPalButton() {
       style: { layout: 'vertical', color: 'gold', shape: 'rect', label: 'subscribe' },
       createSubscription: (data, actions) => {
         return actions.subscription.create({
-          plan_id: 'P-7EW53343TE1951400NG64P3Y'
+          plan_id: 'P-1B949881T1828104GNHA3CUY'
         });
       },
       onApprove: async (data) => {
@@ -887,12 +887,12 @@ function renderPayPalButton() {
       },
       onError: (err) => {
         console.error('PayPal error:', err);
-        container.innerHTML = '<div style="text-align:center;padding:12px;"><a href="https://www.paypal.com/webapps/billing/plans/subscribe?plan_id=P-7EW53343TE1951400NG64P3Y" target="_blank" style="display:inline-block;background:linear-gradient(135deg,#f5c842,#f0a500);color:#000;font-weight:600;padding:12px 24px;border-radius:8px;text-decoration:none;font-family:sans-serif;font-size:.9rem;">Subscribe with PayPal — £6.99/mo</a></div>';
+        container.innerHTML = '<div style="text-align:center;padding:12px;"><a href="https://www.paypal.com/webapps/billing/plans/subscribe?plan_id=P-1B949881T1828104GNHA3CUY" target="_blank" style="display:inline-block;background:linear-gradient(135deg,#f5c842,#f0a500);color:#000;font-weight:600;padding:12px 24px;border-radius:8px;text-decoration:none;font-family:sans-serif;font-size:.9rem;">Subscribe with PayPal — £6.99/mo</a></div>';
       },
       onCancel: () => { toast('Payment cancelled', 'in'); }
     }).render('#paypal-button-container').catch(err => {
       console.error('Render error:', err);
-      container.innerHTML = '<div style="text-align:center;padding:12px;"><a href="https://www.paypal.com/webapps/billing/plans/subscribe?plan_id=P-7EW53343TE1951400NG64P3Y" target="_blank" style="display:inline-block;background:linear-gradient(135deg,#f5c842,#f0a500);color:#000;font-weight:600;padding:12px 24px;border-radius:8px;text-decoration:none;font-family:sans-serif;font-size:.9rem;">Subscribe with PayPal — £6.99/mo</a></div>';
+      container.innerHTML = '<div style="text-align:center;padding:12px;"><a href="https://www.paypal.com/webapps/billing/plans/subscribe?plan_id=P-1B949881T1828104GNHA3CUY" target="_blank" style="display:inline-block;background:linear-gradient(135deg,#f5c842,#f0a500);color:#000;font-weight:600;padding:12px 24px;border-radius:8px;text-decoration:none;font-family:sans-serif;font-size:.9rem;">Subscribe with PayPal — £6.99/mo</a></div>';
     });
   };
   tryRender();
