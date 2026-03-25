@@ -2,8 +2,8 @@
   "name": "LifeAI — Personal Command Centre",
   "short_name": "LifeAI",
   "description": "Your intelligent personal assistant for tasks, finance, health and AI chat.",
-  "start_url": "/lifeai/index.html",
-  "scope": "/lifeai/",
+  "start_url": "https://smartlifeai.co.uk/index.html",
+  "scope": "https://smartlifeai.co.uk/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#080a08",
@@ -22,6 +22,5 @@
       "purpose": "any maskable"
     }
   ],
-  "screenshots": [],
   "categories": ["productivity", "lifestyle", "health"]
 }
