@@ -1242,9 +1242,21 @@ function qs(t){ document.getElementById('cinput').value=t; sendChat(); }
 // ═══════ INIT ═══════
 document.addEventListener('DOMContentLoaded',()=>{
   renderTasks();renderApts();renderEmails();renderExps();renderRems();renderActBars();renderDrafts();
-  setTimeout(()=>{
+  // Send daily task reminder notification
+  setTimeout(async () => {
     updateHealthDisplay();
-  },600);
+    if ('Notification' in window && Notification.permission === 'granted') {
+      const pending = S.tasks.filter(t => !t.done).length;
+      if (pending > 0) {
+        const reg = await navigator.serviceWorker.ready;
+        reg.showNotification('LifeAI Reminder 🌅', {
+          body: `You have ${pending} task${pending === 1 ? '' : 's'} pending today. Let's get things done!`,
+          icon: '/icon-192.png',
+          badge: '/icon-192.png',
+        });
+      }
+    }
+  }, 600);
   const ta=document.getElementById('cinput');
   ta.addEventListener('input',()=>{ta.style.height='auto';ta.style.height=Math.min(ta.scrollHeight,130)+'px';});
   ta.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat();}});
@@ -1330,10 +1342,44 @@ document.addEventListener('DOMContentLoaded',()=>{
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/lifeai/sw.js')
-        .then(r => console.log('SW registered'))
+      navigator.serviceWorker.register('/sw.js')
+        .then(async reg => {
+          console.log('SW registered');
+          // Request notification permission
+          if ('Notification' in window && Notification.permission === 'default') {
+            const perm = await Notification.requestPermission();
+            if (perm === 'granted') {
+              await subscribeToPush(reg);
+            }
+          } else if (Notification.permission === 'granted') {
+            await subscribeToPush(reg);
+          }
+        })
         .catch(e => console.log('SW error:', e));
     });
+  }
+
+  async function subscribeToPush(reg) {
+    try {
+      const VAPID_PUBLIC_KEY = 'BOicrh8l9bmKZdvdc5JFCZ57Kk6K5T_l5zrbhQlWQk33atUkMRr9wrCbLUvN0kqSojgyckzcedcIrVpIObgp_bo';
+      const sub = await reg.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: VAPID_PUBLIC_KEY
+      });
+      // Save subscription to Firestore
+      const fbUser = JSON.parse(localStorage.getItem('lifeai_user') || 'null');
+      if (fbUser) {
+        const { getFirestore, doc, updateDoc } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
+        const { getApp } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
+        const db = getFirestore(getApp());
+        await updateDoc(doc(db, 'users', fbUser.uid), {
+          pushSubscription: JSON.stringify(sub)
+        });
+        console.log('Push subscription saved');
+      }
+    } catch (e) {
+      console.log('Push subscription failed:', e);
+    }
   }
 </script>
 </body>
