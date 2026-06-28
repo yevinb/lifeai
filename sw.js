@@ -1,10 +1,11 @@
-const CACHE_NAME = 'lifeai-v2';
+const CACHE_NAME = 'lifeai-v3';
 const ASSETS = [
   '/index.html',
   '/dashboard.html',
   '/about.html',
   '/privacy.html',
   '/manifest.json',
+  '/js/finance-pro.js',
 ];
 
 // Install
