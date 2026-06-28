@@ -178,7 +178,11 @@ function updateUserTopbar(name) {
   const av = document.querySelector('.topbar .av');
   if (!av || !name) return;
   const initial = name.charAt(0).toUpperCase();
-  av.innerHTML = initial + '<div class="logout-dropdown" id="logoutDropdown"><div onclick="logout()">Sign Out</div></div>';
+  av.innerHTML = initial +
+    '<div class="logout-dropdown" id="logoutDropdown">' +
+    '<div onclick="openSettings?.()">⚙ Settings</div>' +
+    '<div onclick="nav(\'dashboard\',document.querySelector(\'.nav-b[onclick*=dashboard]\'))">Today</div>' +
+    '<div onclick="logout()">Sign Out</div></div>';
 }
 
 function setupMobileNav() {
@@ -259,10 +263,12 @@ function renderHealthStreak() {
 
 function showOnboardingIfNew() {
   const banner = document.getElementById('onboard-banner');
-  if (!banner) return;
   const isEmpty = !S.tasks.length && !S.apts.length && !(S.subs?.length);
   const dismissed = localStorage.getItem('lifeai_onboard_dismissed');
-  banner.classList.toggle('on', isEmpty && !dismissed);
+  if (banner) banner.classList.toggle('on', isEmpty && !dismissed);
+  if (typeof showOnboardingWizard === 'function') {
+    setTimeout(showOnboardingWizard, 800);
+  }
 }
 
 function dismissOnboarding() {

@@ -899,6 +899,7 @@ select option{background:var(--surface-3);}
 <script src="js/lifeai-premium.js?v=3.0"></script>
 <script src="js/lifeai-ux.js?v=3.0"></script>
 <script src="js/lifeai-elite.js?v=3.0"></script>
+<script src="js/lifeai-reliability.js?v=3.0"></script>
 
 <script>
 // ═══════ CONFIG ═══════
@@ -1089,7 +1090,7 @@ async function bookApt(){
   toast(r._e?'Saved locally (backend offline)':'Appointment booked! 📅');
   ['a-title','a-dt','a-loc','a-notes'].forEach(id=>document.getElementById(id).value='');
 }
-function syncCal(){toast('Syncing Google Calendar…','in');setTimeout(()=>toast('Calendar synced ✓'),1800);}
+function syncCal(){toast('Google Calendar sync coming soon — appointments you book here are saved to your account','in');}
 
 // ═══════ PLAN STATE ═══════
 let isPro = false;
@@ -1108,10 +1109,6 @@ function checkLimit(type) {
   }
   if (type === 'chats' && todayChatCount >= FREE_LIMITS.chats) {
     toast(`Free plan: ${FREE_LIMITS.chats} AI chats/day. Upgrade to Pro for unlimited!`, 'er');
-    showUpgradeModal(); return false;
-  }
-  if (type === 'drafts') {
-    toast('Saving drafts is a Pro feature. Upgrade to unlock!', 'er');
     showUpgradeModal(); return false;
   }
   return true;
@@ -1215,7 +1212,6 @@ async function draftEmail(){
 }
 
 function saveDraft(){
-  if(!checkLimit('drafts')) return;
   const to=document.getElementById('e-to').value.trim();
   const sub=document.getElementById('e-sub').value.trim();
   const content=document.getElementById('email-out').textContent;
@@ -1317,7 +1313,9 @@ function updateFinanceCards(){
 function renderCats(){
   const el=document.getElementById('cat-bd');if(!el)return;
   const bc={};S.exps.forEach(e=>{bc[e.cat]=(bc[e.cat]||0)+parseFloat(e.amt);});
-  const mx=Math.max(...Object.values(bc));el.innerHTML='';
+  const vals=Object.values(bc);
+  if(!vals.length){el.innerHTML='<div style="font-size:.78rem;color:var(--text-3);padding:8px 0">Log expenses to see categories</div>';return;}
+  const mx=Math.max(...vals);el.innerHTML='';
   Object.entries(bc).sort((a,b)=>b[1]-a[1]).forEach(([c,v])=>{
     const row=document.createElement('div');row.className='cat-row';
     row.innerHTML=`<span class="cat-nm">${c}</span><div class="cat-bw"><div class="cat-bf" style="width:${Math.round(v/mx*100)}%"></div></div><span class="cat-v">£${v.toFixed(0)}</span>`;
@@ -1338,8 +1336,15 @@ async function finSum(){
   const out=document.getElementById('fin-out');out.style.display='block';out.textContent='Analysing your finances…';out.classList.add('streaming');
   const r=await post('/api/finance-summary',{expenses:S.exps,subscriptions:S.subs||[],profile:S.profile||{}});
   out.classList.remove('streaming');
-  if(r._e){const tot=S.exps.reduce((s,e)=>s+parseFloat(e.amt),0);const top=[...S.exps].sort((a,b)=>b.amt-a.amt)[0];out.textContent=`📊 Finance Summary\n\nTotal tracked: £${tot.toFixed(2)}\nLargest expense: ${top.desc} (£${top.amt})\n\nYou're spending most on ${top.cat}. Consider reviewing subscriptions and setting a weekly cap. Your savings rate of 23% is close to the 25% target — keep it up!`;}
-  else out.textContent=r.summary;
+  if(r._e){
+    if(!S.exps.length){
+      out.textContent='📊 Finance Summary\n\nNo expenses logged yet. Add a few entries or tap "Load sample" to explore — then ask AI for insights.';
+    } else {
+      const tot=S.exps.reduce((s,e)=>s+parseFloat(e.amt),0);
+      const top=[...S.exps].sort((a,b)=>parseFloat(b.amt)-parseFloat(a.amt))[0];
+      out.textContent=`📊 Finance Summary\n\nTotal tracked: £${tot.toFixed(2)}\nLargest expense: ${top.desc} (£${parseFloat(top.amt).toFixed(2)})\n\nYou're spending most on ${top.cat}. Consider reviewing subscriptions and setting a weekly cap.`;
+    }
+  } else out.textContent=r.summary||'No summary returned.';
 }
 
 // ═══════ HEALTH ═══════
@@ -1516,26 +1521,32 @@ async function sendChat(){
 
 function qs(t){ document.getElementById('cinput').value=t; sendChat(); }
 
+async function maybeShowDailyTaskNotification() {
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  const key = 'lifeai_task_notif_' + new Date().toISOString().slice(0, 10);
+  if (sessionStorage.getItem(key)) return;
+  const pending = S.tasks.filter(t => !t.done).length;
+  if (pending <= 0) return;
+  try {
+    const reg = await navigator.serviceWorker.ready;
+    await reg.showNotification('LifeAI Reminder 🌅', {
+      body: `You have ${pending} task${pending === 1 ? '' : 's'} pending today.`,
+      icon: '/icon-192.png',
+      badge: '/icon-192.png',
+    });
+    sessionStorage.setItem(key, '1');
+  } catch (e) { /* notifications optional */ }
+}
+
 // ═══════ INIT ═══════
 document.addEventListener('DOMContentLoaded',()=>{
   // Hide loading if auth takes too long (fallback)
   setTimeout(() => hideAppLoading?.(), 4000);
   renderTasks();renderApts();renderEmails();renderExps();renderRems();renderActBars();renderDrafts();
   if(typeof renderFinanceAll==='function'){loadFinProfileFields();renderFinanceAll();}
-  // Send daily task reminder notification
-  setTimeout(async () => {
+  setTimeout(() => {
     updateHealthDisplay();
-    if ('Notification' in window && Notification.permission === 'granted') {
-      const pending = S.tasks.filter(t => !t.done).length;
-      if (pending > 0) {
-        const reg = await navigator.serviceWorker.ready;
-        reg.showNotification('LifeAI Reminder 🌅', {
-          body: `You have ${pending} task${pending === 1 ? '' : 's'} pending today. Let's get things done!`,
-          icon: '/icon-192.png',
-          badge: '/icon-192.png',
-        });
-      }
-    }
+    maybeShowDailyTaskNotification();
   }, 600);
   const ta=document.getElementById('cinput');
   ta.addEventListener('input',()=>{ta.style.height='auto';ta.style.height=Math.min(ta.scrollHeight,130)+'px';});
@@ -1596,7 +1607,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   };
 
   // ── Load user data from Firestore ─────────────────
-  async function loadFromFirestore(uid) {
+  async function loadFromFirestore(uid, firebaseUser) {
     try {
       const snap = await getDoc(doc(db, 'users', uid));
       if (snap.exists()) {
@@ -1636,6 +1647,10 @@ document.addEventListener('DOMContentLoaded',()=>{
       if (typeof loadSettingsForm === 'function') loadSettingsForm();
       if (typeof hideAppLoading === 'function') hideAppLoading();
       if (typeof showOnboardingIfNew === 'function') showOnboardingIfNew();
+      const displayName = S.profile?.displayName ||
+        JSON.parse(localStorage.getItem('lifeai_user') || '{}').fullName ||
+        firebaseUser?.displayName;
+      if (displayName && typeof updateUserTopbar === 'function') updateUserTopbar(displayName);
     } catch (e) {
       console.error('Load error:', e);
       if (typeof hideAppLoading === 'function') hideAppLoading();
@@ -1647,7 +1662,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     if (!firebaseUser) {
       window.location.href = 'index.html';
     } else {
-      await loadFromFirestore(firebaseUser.uid);
+      await loadFromFirestore(firebaseUser.uid, firebaseUser);
     }
   });
 </script>
