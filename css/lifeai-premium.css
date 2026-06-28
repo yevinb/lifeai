@@ -305,6 +305,80 @@ body.la-v2 .hero-title { font-size: clamp(2.4rem, 5vw, 3.6rem); }
 body.la-v2 .hero-card { box-shadow: 0 32px 80px rgba(0,0,0,.5); border-color: rgba(201,168,76,.2); }
 body.la-v2 .feature-card { backdrop-filter: blur(8px); }
 
+/* ── Sidebar user ── */
+.sidebar-user {
+  padding: 12px 10px;
+  margin: 8px 0;
+  border-radius: var(--rm);
+  background: var(--surface-2);
+  border: 1px solid var(--border-2);
+}
+.su-name { font-size: .88rem; font-weight: 500; color: var(--text); margin-bottom: 2px; }
+.su-plan { font-size: .62rem; font-family: var(--mono); color: var(--text-3); }
+
+/* ── Email templates ── */
+.template-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+.tpl-chip {
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text-2);
+  font-size: .72rem;
+  font-family: var(--body);
+  cursor: pointer;
+  transition: all .14s;
+}
+.tpl-chip:hover { border-color: rgba(201,168,76,.35); color: var(--gold); background: var(--gold-g); }
+
+/* ── Chat context bar ── */
+.chat-context-bar {
+  display: flex;
+  gap: 10px;
+  padding: 12px 38px;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--border-2);
+  background: rgba(8,10,8,.5);
+}
+.ctx-chip {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 16px;
+  border-radius: var(--rm);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  cursor: pointer;
+  transition: all .14s;
+  min-width: 100px;
+}
+.ctx-chip:hover { border-color: rgba(201,168,76,.3); transform: translateY(-1px); }
+.ctx-l { font-size: .58rem; font-family: var(--mono); text-transform: uppercase; letter-spacing: .08em; color: var(--text-3); }
+.ctx-v { font-size: .78rem; font-weight: 500; color: var(--text); }
+
+/* ── Upgrade modal premium ── */
+.la-upgrade-modal > div {
+  border-color: rgba(201,168,76,.25) !important;
+  box-shadow: 0 40px 120px rgba(0,0,0,.7) !important;
+}
+
+/* ── Draft cards ── */
+.draft-card-premium { transition: transform .14s, border-color .14s !important; }
+.draft-card-premium:hover { transform: translateY(-2px); border-color: rgba(201,168,76,.25) !important; }
+
+/* ── Premium empty states ── */
+.empty-state {
+  padding: 24px;
+  text-align: center;
+  border: 1px dashed var(--border);
+  border-radius: var(--rm);
+  background: var(--surface-2);
+}
+
+/* ── Pro plan card glow ── */
+body.la-v2 #plan-pro { box-shadow: 0 0 24px rgba(201,168,76,.12); }
+
 @media (max-width: 960px) {
   body.la-v2 .la-search { display: none; }
   body.la-v2 .task-board { grid-template-columns: 1fr; }

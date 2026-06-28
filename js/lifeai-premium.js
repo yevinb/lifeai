@@ -1,6 +1,6 @@
 /* LifeAI Premium v2 — unmistakable upgrade on every screen */
 
-const LA_VERSION = '2.0';
+const LA_VERSION = '2.1';
 
 function laEscP(s) {
   return typeof laEsc === 'function' ? laEsc(s) : String(s ?? '');
