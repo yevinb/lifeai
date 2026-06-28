@@ -1,0 +1,381 @@
+/* LifeAI Elite v3.0 — unmistakable premium Life OS */
+
+body.la-elite {
+  --aurora-1: rgba(201, 168, 76, .14);
+  --aurora-2: rgba(74, 222, 128, .08);
+  --aurora-3: rgba(147, 197, 253, .05);
+  --elite-glow: 0 0 60px rgba(201, 168, 76, .12);
+  --card-border: rgba(201, 168, 76, .14);
+}
+
+/* ── Aurora background ── */
+body.la-elite .main {
+  position: relative;
+  isolation: isolate;
+}
+body.la-elite .main::before {
+  content: '';
+  position: fixed;
+  inset: 62px 0 0 256px;
+  background:
+    radial-gradient(ellipse 80% 50% at 20% -10%, var(--aurora-1), transparent 55%),
+    radial-gradient(ellipse 60% 40% at 90% 20%, var(--aurora-2), transparent 50%),
+    radial-gradient(ellipse 50% 60% at 50% 100%, var(--aurora-3), transparent 55%);
+  pointer-events: none;
+  z-index: 0;
+  animation: aurora-shift 18s ease-in-out infinite alternate;
+}
+@keyframes aurora-shift {
+  0% { opacity: .85; transform: scale(1); }
+  100% { opacity: 1; transform: scale(1.04) translateY(-1%); }
+}
+body.la-elite .panel { position: relative; z-index: 1; }
+
+/* ── Topbar elite line ── */
+body.la-elite .topbar::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(201,168,76,.5) 30%, rgba(74,222,128,.3) 70%, transparent);
+  animation: line-shimmer 4s ease-in-out infinite;
+}
+@keyframes line-shimmer {
+  0%, 100% { opacity: .5; }
+  50% { opacity: 1; }
+}
+
+/* ── Version badge — pulsing gold ── */
+body.la-elite .la-version {
+  background: linear-gradient(135deg, rgba(201,168,76,.35), rgba(74,222,128,.12));
+  border-color: rgba(201,168,76,.55);
+  color: #f5e6a8;
+  font-weight: 600;
+  letter-spacing: .14em;
+  animation: badge-pulse 3s ease-in-out infinite;
+  box-shadow: 0 0 24px rgba(201,168,76,.25), inset 0 1px 0 rgba(255,255,255,.08);
+}
+@keyframes badge-pulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(201,168,76,.2); }
+  50% { box-shadow: 0 0 36px rgba(201,168,76,.4); }
+}
+
+/* ── Splash screen ── */
+#la-elite-splash {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #060806;
+  transition: opacity .6s ease, visibility .6s;
+}
+#la-elite-splash.out {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+#la-elite-splash .splash-orb {
+  width: 88px;
+  height: 88px;
+  margin-bottom: 28px;
+  animation: splash-orb 2s ease-in-out infinite;
+}
+@keyframes splash-orb {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 20px rgba(201,168,76,.4)); }
+  50% { transform: scale(1.08); filter: drop-shadow(0 0 40px rgba(201,168,76,.7)); }
+}
+#la-elite-splash .splash-title {
+  font-family: var(--display);
+  font-size: clamp(2rem, 6vw, 3.2rem);
+  font-weight: 300;
+  letter-spacing: -.02em;
+  margin-bottom: 8px;
+  animation: splash-fade-up .8s ease both;
+}
+#la-elite-splash .splash-title em {
+  font-style: italic;
+  color: var(--gold);
+}
+#la-elite-splash .splash-sub {
+  font-family: var(--mono);
+  font-size: .72rem;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--gold-b);
+  animation: splash-fade-up .8s .15s ease both;
+}
+#la-elite-splash .splash-bar {
+  width: 160px;
+  height: 2px;
+  background: var(--border);
+  border-radius: 2px;
+  margin-top: 32px;
+  overflow: hidden;
+  animation: splash-fade-up .8s .3s ease both;
+}
+#la-elite-splash .splash-bar-fill {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, var(--gold-d), var(--gold-b));
+  animation: splash-load 1.8s ease forwards;
+}
+@keyframes splash-fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes splash-load {
+  to { width: 100%; }
+}
+
+/* ── Briefing hero — gradient border card ── */
+body.la-elite #brief-hero {
+  position: relative;
+  padding: 28px 32px;
+  border-radius: var(--rl);
+  background: linear-gradient(145deg, rgba(14,18,14,.98), rgba(19,24,20,.95));
+  box-shadow: var(--elite-glow);
+  overflow: hidden;
+}
+body.la-elite #brief-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(201,168,76,.55), rgba(74,222,128,.25), rgba(201,168,76,.2));
+  background-size: 200% 200%;
+  animation: gradient-border 6s ease infinite;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+@keyframes gradient-border {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+body.la-elite .brief-headline {
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  background: linear-gradient(135deg, var(--text), var(--gold-b));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+body.la-elite .brief-stat {
+  background: rgba(255,255,255,.02);
+  border: 1px solid var(--card-border);
+  border-radius: var(--rm);
+  transition: transform .2s, border-color .2s, box-shadow .2s;
+}
+body.la-elite .brief-stat:hover {
+  transform: translateY(-3px);
+  border-color: rgba(201,168,76,.35);
+  box-shadow: 0 12px 32px rgba(0,0,0,.35);
+}
+body.la-elite .brief-stat-val {
+  font-size: 1.75rem;
+  background: linear-gradient(180deg, var(--gold-b), var(--gold));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Quick actions ── */
+body.la-elite .qa-btn {
+  border: 1px solid var(--card-border);
+  backdrop-filter: blur(8px);
+  transition: all .2s var(--ease);
+}
+body.la-elite .qa-btn.primary {
+  background: linear-gradient(135deg, var(--gold-d), var(--gold));
+  border-color: transparent;
+  box-shadow: 0 4px 20px rgba(201,168,76,.3);
+}
+body.la-elite .qa-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,.4);
+}
+
+/* ── All cards glass upgrade ── */
+body.la-elite .card,
+body.la-elite .brief-grid > div,
+body.la-elite .brief-focus,
+body.la-elite .brief-ai-card,
+body.la-elite .c,
+body.la-elite .fin-card,
+body.la-elite .task-board-col,
+body.la-elite .panel-hero {
+  background: rgba(19, 24, 20, .75) !important;
+  backdrop-filter: blur(12px);
+  border-color: var(--card-border) !important;
+  transition: transform .22s var(--ease), box-shadow .22s, border-color .22s;
+}
+body.la-elite .card:hover,
+body.la-elite .brief-grid > div:hover,
+body.la-elite .brief-focus:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 48px rgba(0,0,0,.4);
+  border-color: rgba(201,168,76,.28) !important;
+}
+
+/* ── Panel headers ── */
+body.la-elite .ph-h {
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  letter-spacing: -.03em;
+}
+body.la-elite .ph-h em {
+  background: linear-gradient(135deg, var(--gold), var(--gold-b));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Stagger reveal ── */
+body.la-elite .stag {
+  opacity: 0;
+  transform: translateY(16px);
+  animation: stag-in .6s var(--ease) forwards;
+}
+body.la-elite .stag:nth-child(1) { animation-delay: .05s; }
+body.la-elite .stag:nth-child(2) { animation-delay: .12s; }
+body.la-elite .stag:nth-child(3) { animation-delay: .19s; }
+body.la-elite .stag:nth-child(4) { animation-delay: .26s; }
+body.la-elite .stag:nth-child(5) { animation-delay: .33s; }
+@keyframes stag-in {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Sidebar elite accent ── */
+body.la-elite .nav-b.on {
+  position: relative;
+}
+body.la-elite .nav-b.on::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: linear-gradient(180deg, var(--gold-b), var(--gold-d));
+  box-shadow: 0 0 12px rgba(201,168,76,.5);
+}
+
+/* ── Chat premium full height ── */
+body.la-elite #panel-chat {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 62px);
+}
+body.la-elite .chat-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 520px;
+  border: 1px solid var(--card-border);
+  border-radius: var(--rl);
+  overflow: hidden;
+  box-shadow: var(--elite-glow);
+}
+body.la-elite .chat-body {
+  flex: 1;
+  min-height: 400px;
+}
+body.la-elite .msg.ai {
+  border-left: 2px solid rgba(201,168,76,.4);
+  background: rgba(201,168,76,.04);
+}
+
+/* ── Floating Ask AI ── */
+#la-fab-ai {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 22px;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  font-family: var(--body);
+  font-size: .85rem;
+  font-weight: 500;
+  color: var(--void);
+  background: linear-gradient(135deg, var(--gold-d), var(--gold), var(--gold-b));
+  box-shadow: 0 8px 32px rgba(201,168,76,.4), 0 0 0 1px rgba(255,255,255,.1) inset;
+  transition: transform .2s, box-shadow .2s;
+  animation: fab-enter .5s .8s ease both;
+}
+#la-fab-ai:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 12px 40px rgba(201,168,76,.5);
+}
+#la-fab-ai svg { flex-shrink: 0; }
+@keyframes fab-enter {
+  from { opacity: 0; transform: translateY(20px) scale(.9); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ── Update toast banner v3 ── */
+#la-elite-banner {
+  position: fixed;
+  top: 72px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-120%);
+  z-index: 9000;
+  padding: 12px 24px;
+  border-radius: 999px;
+  font-size: .82rem;
+  background: rgba(14,18,14,.95);
+  border: 1px solid rgba(201,168,76,.4);
+  box-shadow: 0 12px 40px rgba(0,0,0,.5), var(--elite-glow);
+  transition: transform .4s cubic-bezier(.34,1.56,.64,1);
+  white-space: nowrap;
+}
+#la-elite-banner.show {
+  transform: translateX(-50%) translateY(0);
+}
+#la-elite-banner strong { color: var(--gold-b); }
+
+/* ── Copilot strip glow ── */
+body.la-elite .la-copilot {
+  border: 1px solid rgba(201,168,76,.2);
+  background: linear-gradient(90deg, rgba(201,168,76,.06), transparent);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
+}
+
+/* ── Task board columns ── */
+body.la-elite .task-board-col h3 {
+  font-family: var(--mono);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  font-size: .62rem;
+  color: var(--gold);
+}
+
+/* ── Loading ring upgrade ── */
+body.la-elite #app-loading .load-ring {
+  border-color: rgba(201,168,76,.15);
+  border-top-color: var(--gold);
+  box-shadow: 0 0 30px rgba(201,168,76,.2);
+}
+
+/* ── Mobile ── */
+@media (max-width: 900px) {
+  body.la-elite .main::before { inset: 62px 0 0 0; }
+  #la-fab-ai {
+    bottom: 20px;
+    right: 20px;
+    padding: 12px 18px;
+    font-size: .8rem;
+  }
+  #la-elite-banner { font-size: .72rem; padding: 10px 16px; max-width: 92vw; white-space: normal; text-align: center; }
+}

@@ -1,6 +1,6 @@
 /* LifeAI Premium v2 — unmistakable upgrade on every screen */
 
-const LA_VERSION = '2.1';
+const LA_VERSION = '3.0';
 
 function laEscP(s) {
   return typeof laEsc === 'function' ? laEsc(s) : String(s ?? '');
@@ -29,8 +29,8 @@ function injectVersionBadge() {
   const badge = document.createElement('div');
   badge.id = 'la-version';
   badge.className = 'la-version';
-  badge.title = 'Life OS 2.0 — Premium upgrade';
-  badge.innerHTML = '✦ Life OS 2.0';
+  badge.title = 'Life OS 3.0 Elite — Premium upgrade';
+  badge.innerHTML = '✦ Life OS 3.0';
   pills.appendChild(badge);
 }
 
@@ -55,18 +55,18 @@ function injectUpdateBanner() {
   if (document.getElementById('la-update-banner')) return;
   const b = document.createElement('div');
   b.id = 'la-update-banner';
-  b.innerHTML = '<strong>Life OS 2.0</strong> is active — briefing, copilot & premium UI<span style="margin-left:8px;opacity:.6">· Today tab in sidebar</span>';
+  b.innerHTML = '<strong>Life OS 3.0 Elite</strong> is active — aurora UI, animated briefing, floating AI<span style="margin-left:8px;opacity:.6">· Today tab in sidebar</span>';
   document.body.appendChild(b);
   requestAnimationFrame(() => b.classList.add('show'));
   setTimeout(() => b.classList.remove('show'), 8000);
 }
 
 function showV2Welcome() {
-  if (sessionStorage.getItem('la_v2_welcomed')) return;
-  sessionStorage.setItem('la_v2_welcomed', '1');
+  if (sessionStorage.getItem('la_v3_welcomed')) return;
+  sessionStorage.setItem('la_v3_welcomed', '1');
   setTimeout(() => {
     if (typeof toast === 'function') {
-      toast('Life OS 2.0 loaded — open Today for your briefing', 'ok');
+      toast('Life OS 3.0 Elite loaded — open Today for your briefing', 'ok');
     }
   }, 1500);
 }
@@ -247,7 +247,7 @@ function forceServiceWorkerUpdate() {
   navigator.serviceWorker.getRegistrations().then(regs => regs.forEach(reg => reg.update()));
   navigator.serviceWorker.addEventListener('message', e => {
     if (e.data?.type === 'LA_SW_UPDATED' && typeof toast === 'function') {
-      toast('Life OS 2.0 update installed — refresh if layout looks old', 'in');
+      toast('Life OS 3.0 update installed — refresh if layout looks old', 'in');
     }
   });
 }

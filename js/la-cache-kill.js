@@ -1,6 +1,6 @@
 /* Cache killer — runs on index + dashboard to fix stuck old service workers */
 (function () {
-  var KEY = 'lifeai_cache_fixed_v21';
+  var KEY = 'lifeai_cache_fixed_v30';
   if (sessionStorage.getItem(KEY)) return;
 
   function done() {

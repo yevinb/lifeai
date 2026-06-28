@@ -1,5 +1,5 @@
 /* LifeAI SW v8 — network first, no stale dashboard */
-const CACHE = 'lifeai-v8-2.1';
+const CACHE = 'lifeai-v9-3.0';
 const SHELL = ['/manifest.json', '/icon-192.png', '/icon-512.png'];
 
 self.addEventListener('install', function (e) {
