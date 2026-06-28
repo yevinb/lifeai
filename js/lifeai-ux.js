@@ -184,6 +184,10 @@ function initLifeAIUx() {
 
   window.applyEmailTemplate = applyEmailTemplate;
   window.renderChatContext = renderChatContext;
+  window.updateSidebarUser = updateSidebarUser;
+  window.updateSidebarProgress = updateSidebarProgress;
+  window.injectTasksHero = injectTasksHero;
+  window.injectEmailHero = injectEmailHero;
 
   const origLoad = window.loadSettingsForm;
   /* re-run after firestore load via polling once */
