@@ -255,6 +255,22 @@ select option{background:var(--surface-3);}
 .cf-row{display:grid;grid-template-columns:48px 1fr auto auto;gap:10px;padding:10px 12px;background:var(--surface-2);border-radius:var(--r);margin-bottom:6px;font-size:.78rem;border-left:3px solid var(--border);}
 .cf-row.cf-in{border-left-color:var(--em);}.cf-row.cf-out{border-left-color:var(--danger);}
 
+/* PRO POLISH */
+.insight-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:4px;}
+.insight-chip{display:flex;align-items:center;gap:10px;padding:14px 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--rm);cursor:pointer;transition:all .15s;font-size:.78rem;color:var(--text-2);}
+.insight-chip:hover{border-color:rgba(201,168,76,.35);background:var(--surface-2);color:var(--text);}
+.insight-tag{font-size:.58rem;font-family:var(--mono);font-weight:500;padding:3px 7px;border-radius:4px;background:var(--gold-g);color:var(--gold);flex-shrink:0;}
+.la-cmd{position:fixed;inset:0;z-index:2000;background:rgba(8,10,8,.88);backdrop-filter:blur(10px);display:flex;align-items:flex-start;justify-content:center;padding-top:14vh;opacity:0;visibility:hidden;transition:all .2s;}
+.la-cmd.on{opacity:1;visibility:visible;}
+.la-cmd-box{width:100%;max-width:480px;background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,.6);}
+.la-cmd-box input{width:100%;padding:18px 22px;border:none;border-bottom:1px solid var(--border);background:transparent;color:var(--text);font-family:var(--body);font-size:1rem;outline:none;}
+.la-cmd-list{max-height:280px;overflow-y:auto;}
+.la-cmd-item{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;cursor:pointer;font-size:.88rem;color:var(--text-2);transition:background .1s;}
+.la-cmd-item.on,.la-cmd-item:hover{background:var(--gold-g);color:var(--text);}
+.la-cmd-item kbd{font-size:.68rem;font-family:var(--mono);color:var(--text-3);}
+.cmd-hint{font-family:var(--mono);font-size:.68rem;color:var(--text-3);padding:4px 10px;border:1px solid var(--border);border-radius:4px;cursor:pointer;}
+.cmd-hint:hover{border-color:var(--gold);color:var(--gold);}
+
 /* AI OUTPUT */
 .aiout{background:var(--surface-2);border:1px solid rgba(201,168,76,.14);border-radius:var(--rm);padding:14px 16px;font-size:.83rem;line-height:1.75;color:var(--text-2);white-space:pre-wrap;font-family:var(--body);position:relative;}
 .aiout::before{content:'AI';position:absolute;top:9px;right:12px;font-size:.52rem;font-family:var(--mono);letter-spacing:.14em;color:var(--gold-d);background:var(--gold-g);border:1px solid rgba(201,168,76,.14);padding:2px 6px;border-radius:4px;}
@@ -360,6 +376,7 @@ select option{background:var(--surface-3);}
       <div class="pill"><div class="pip g"></div><span id="tdate">—</span></div>
     </div>
     <div class="top-r">
+      <span class="cmd-hint" id="la-cmd-btn" title="Command palette">⌘K</span>
       <span id="tclock">—</span>
       <div class="av" onclick="toggleLogout()">
         U
@@ -469,7 +486,7 @@ select option{background:var(--surface-3);}
     <!-- ═══ DASHBOARD ═══ -->
     <div class="panel on" id="panel-dashboard">
       <div class="ph">
-        <div><div class="ph-eye">Command Centre</div><h1 class="ph-h">Good <em>morning</em></h1><p class="ph-sub" id="ph-date">Loading…</p></div>
+        <div><div class="ph-eye">Command Centre</div><h1 class="ph-h" id="dash-greeting">Good <em>morning</em></h1><p class="ph-sub" id="ph-date">Loading…</p></div>
         <button class="btn btn-gold" onclick="planDay()"><svg width="13" height="13"><use href="#i-spark"/></svg>Plan My Day</button>
       </div>
       <div class="g4 stag" id="kpi-row">
@@ -478,6 +495,7 @@ select option{background:var(--surface-3);}
         <div class="kpi" data-n="③"><div class="kpi-top"><div class="kpi-ic"><svg width="15" height="15"><use href="#i-mail"/></svg></div><span class="kpi-tr fl" id="kv-mt">Saved Drafts</span></div><div class="kpi-val" id="kv-mails">0</div><div class="kpi-lbl">Email Drafts</div></div>
         <div class="kpi" data-n="④"><div class="kpi-top"><div class="kpi-ic"><svg width="15" height="15"><use href="#i-fin"/></svg></div><span class="kpi-tr fl">This week</span></div><div class="kpi-val" id="kv-spend">£0</div><div class="kpi-lbl">Spent This Week</div></div>
       </div>
+      <div class="insight-row stag" id="dash-insights"></div>
       <div class="g2">
         <div class="card"><div class="c-eye">AI Generated</div><div class="c-title">Today's Optimised Plan</div>
           <div class="aiout" id="plan-out">Press <strong style="color:var(--gold)">Plan My Day</strong> to generate a smart, time-blocked schedule from your tasks and appointments.</div>
@@ -488,6 +506,9 @@ select option{background:var(--surface-3);}
           <div style="font-family:var(--mono);font-size:1.6rem;color:var(--gold);margin:8px 0" id="dash-burn">£0</div>
           <div style="font-size:.78rem;color:var(--text-2)">Potential savings: <span id="dash-save" style="color:var(--em)">£0</span>/mo · Open Finance →</div>
         </div>
+      </div>
+      <div class="card stag"><div class="c-eye">Timeline</div><div class="c-title">Today's Agenda</div>
+        <div class="tl" id="tl"><div style="font-size:.8rem;color:var(--text-3);padding:12px 0;">Loading agenda…</div></div>
       </div>
     </div>
 
@@ -727,7 +748,16 @@ select option{background:var(--surface-3);}
   </main>
 </div>
 <div id="toasts"></div>
+
+<div class="la-cmd" id="la-cmd">
+  <div class="la-cmd-box">
+    <input type="text" id="la-cmd-input" placeholder="Jump to… (Finance, Tasks, Plan my day)" autocomplete="off">
+    <div class="la-cmd-list" id="la-cmd-list"></div>
+  </div>
+</div>
+
 <script src="js/finance-pro.js"></script>
+<script src="js/lifeai-pro.js"></script>
 
 <script>
 // ═══════ CONFIG ═══════
@@ -767,7 +797,7 @@ function initDate(){
   document.getElementById('ph-date').textContent=n.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});
   document.getElementById('cwt').textContent=n.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
   // Update greeting
-  const greetEl = document.querySelector('.ph-h');
+  const greetEl = document.getElementById('dash-greeting');
   if(greetEl) greetEl.innerHTML = `${greeting.split(' ')[0]} <em>${greeting.split(' ')[1]}</em>`;
 }
 setInterval(tick,1000);tick();initDate();
@@ -1421,6 +1451,7 @@ document.addEventListener('DOMContentLoaded',()=>{
       renderDrafts();
       updateHealthDisplay();
       if (typeof renderFinanceAll === 'function') { loadFinProfileFields(); renderFinanceAll(); }
+      if (typeof refreshDashboardPro === 'function') refreshDashboardPro();
     } catch (e) {
       console.error('Load error:', e);
     }
