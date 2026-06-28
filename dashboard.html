@@ -13,6 +13,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Outfit:wght@300;400;500;600&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/lifeai-os.css">
   <script src="https://www.paypal.com/sdk/js?client-id=AVpxNsZy3RyB2_QVnjTxQSYi7nDCUyOrMIvQeJau6JtRh5zM-oCuDzkkWDQqrRSIvuz6P4h4SooVS5PY&vault=true&intent=subscription&currency=GBP"></script>
 <style>
 :root {
@@ -124,6 +125,7 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
 .btn-out{background:transparent;color:var(--text-2);border-color:var(--border);}
 .btn-out:hover{background:var(--surface-2);color:var(--text);border-color:rgba(201,168,76,.28);}
 .btn:disabled{opacity:.38;cursor:not-allowed;transform:none!important;}
+.btn-sm{padding:6px 12px;font-size:.72rem;}
 
 /* FORM */
 .fld{display:flex;flex-direction:column;gap:5px;}
@@ -388,7 +390,7 @@ select option{background:var(--surface-3);}
       </svg>
       <div class="logo-words">
         <span class="logo-name">LifeAI</span>
-        <span class="logo-tag">Personal Command Centre</span>
+        <span class="logo-tag">Life Operating System</span>
       </div>
     </div>
     <div class="top-pills">
@@ -411,7 +413,7 @@ select option{background:var(--surface-3);}
   <!-- SIDEBAR -->
   <nav class="sidebar">
     <div class="s-sect">Overview</div>
-    <div class="nav-b on" onclick="nav('dashboard',this)"><span class="nav-ic"><svg width="16" height="16"><use href="#i-dash"/></svg></span>Dashboard</div>
+    <div class="nav-b on" onclick="nav('dashboard',this)"><span class="nav-ic"><svg width="16" height="16"><use href="#i-dash"/></svg></span>Today</div>
     <div class="s-sect">Daily Life</div>
     <div class="nav-b" onclick="nav('tasks',this)"><span class="nav-ic"><svg width="16" height="16"><use href="#i-task"/></svg></span>Tasks<span class="nbadge" id="nb-t">4</span></div>
     <div class="nav-b" onclick="nav('appointments',this)"><span class="nav-ic"><svg width="16" height="16"><use href="#i-cal"/></svg></span>Appointments</div>
@@ -505,37 +507,48 @@ select option{background:var(--surface-3);}
   <!-- MAIN -->
   <main class="main">
 
-    <!-- ═══ DASHBOARD ═══ -->
+    <!-- ═══ TODAY — Daily Briefing (Life OS Home) ═══ -->
     <div class="panel on" id="panel-dashboard">
       <div class="onboard-banner" id="onboard-banner">
-        <div><strong>New here?</strong> Add a task, try <em style="color:var(--gold);font-style:italic">Plan My Day</em>, or open Finance → Load sample. Press <span style="font-family:var(--mono);color:var(--gold)">⌘K</span> to jump anywhere.</div>
+        <div><strong>Welcome to your Life OS.</strong> This is your daily briefing — priorities, calendar, money, and health in one place. Press <span style="font-family:var(--mono);color:var(--gold)">⌘K</span> anytime.</div>
         <button type="button" class="btn btn-out" onclick="dismissOnboarding()">Got it</button>
       </div>
       <div class="ph">
-        <div><div class="ph-eye">Command Centre</div><h1 class="ph-h" id="dash-greeting">Good <em>morning</em></h1><p class="ph-sub" id="ph-date">Loading…</p></div>
-        <button class="btn btn-gold" onclick="planDay()"><svg width="13" height="13"><use href="#i-spark"/></svg>Plan My Day</button>
+        <div><div class="ph-eye">Life Operating System</div><h1 class="ph-h" id="dash-greeting">Good <em>morning</em></h1><p class="ph-sub" id="ph-date">Loading…</p></div>
       </div>
-      <div class="g4 stag" id="kpi-row">
-        <div class="kpi" data-n="①"><div class="kpi-top"><div class="kpi-ic"><svg width="15" height="15"><use href="#i-task"/></svg></div><span class="kpi-tr fl">Pending</span></div><div class="kpi-val" id="kv-tasks">0</div><div class="kpi-lbl">Tasks Today</div></div>
-        <div class="kpi" data-n="②"><div class="kpi-top"><div class="kpi-ic"><svg width="15" height="15"><use href="#i-cal"/></svg></div><span class="kpi-tr fl">Today</span></div><div class="kpi-val" id="kv-apts">0</div><div class="kpi-lbl">Appointments</div></div>
-        <div class="kpi" data-n="③"><div class="kpi-top"><div class="kpi-ic"><svg width="15" height="15"><use href="#i-mail"/></svg></div><span class="kpi-tr fl" id="kv-mt">Saved Drafts</span></div><div class="kpi-val" id="kv-mails">0</div><div class="kpi-lbl">Email Drafts</div></div>
-        <div class="kpi" data-n="④"><div class="kpi-top"><div class="kpi-ic"><svg width="15" height="15"><use href="#i-fin"/></svg></div><span class="kpi-tr fl">This week</span></div><div class="kpi-val" id="kv-spend">£0</div><div class="kpi-lbl">Spent This Week</div></div>
-      </div>
+
+      <div class="brief-hero stag" id="brief-hero"></div>
+      <div class="quick-actions stag" id="brief-actions"></div>
       <div class="insight-row stag" id="dash-insights"></div>
-      <div class="g2">
-        <div class="card"><div class="c-eye">AI Generated</div><div class="c-title">Today's Optimised Plan</div>
-          <div class="aiout" id="plan-out">Press <strong style="color:var(--gold)">Plan My Day</strong> to generate a smart, time-blocked schedule from your tasks and appointments.</div>
+
+      <div class="brief-grid stag">
+        <div class="brief-main">
+          <div class="card brief-focus" id="brief-focus"></div>
+          <div class="card">
+            <div class="c-eye">Priorities</div>
+            <div class="c-title">What to tackle next</div>
+            <div class="prio-list" id="brief-priorities"></div>
+          </div>
+          <div class="card">
+            <div class="c-eye">Calendar</div>
+            <div class="c-title">Today's agenda</div>
+            <div class="tl" id="tl"><div class="empty-state">Loading agenda…</div></div>
+          </div>
+          <div class="card">
+            <div class="c-eye">AI Briefing</div>
+            <div class="c-title">Your personalised summary</div>
+            <div class="brief-ai-text" id="brief-ai-text">Generating your briefing…</div>
+            <div class="aiout" id="plan-out" style="margin-top:14px;display:none;">Press Plan my day for a time-blocked schedule.</div>
+          </div>
         </div>
-        <div class="card" onclick="nav('finance',document.getElementById('nav-finance'))" style="cursor:pointer">
-          <div class="c-eye">Finance pulse</div>
-          <div class="c-title">Subscription burn</div>
-          <div style="font-family:var(--mono);font-size:1.6rem;color:var(--gold);margin:8px 0" id="dash-burn">£0</div>
-          <div style="font-size:.78rem;color:var(--text-2)">Potential savings: <span id="dash-save" style="color:var(--em)">£0</span>/mo · Open Finance →</div>
+        <div class="brief-side">
+          <div class="card" id="brief-fin"></div>
+          <div class="card" id="brief-health"></div>
+          <div class="card" id="brief-reminders"></div>
+          <div class="card" id="brief-activity"></div>
         </div>
       </div>
-      <div class="card stag"><div class="c-eye">Timeline</div><div class="c-title">Today's Agenda</div>
-        <div class="tl" id="tl"><div style="font-size:.8rem;color:var(--text-3);padding:12px 0;">Loading agenda…</div></div>
-      </div>
+      <span id="dash-burn" hidden>£0</span><span id="dash-save" hidden>£0</span>
     </div>
 
     <!-- ═══ TASKS ═══ -->
@@ -800,6 +813,8 @@ select option{background:var(--surface-3);}
 <script src="js/finance-pro.js"></script>
 <script src="js/lifeai-pro.js"></script>
 <script src="js/lifeai-modules.js"></script>
+<script src="js/lifeai-briefing.js"></script>
+<script src="js/lifeai-copilot.js"></script>
 
 <script>
 // ═══════ CONFIG ═══════
@@ -1346,10 +1361,15 @@ function renderActBars(){
 
 // ═══════ DAY PLANNER ═══════
 async function planDay(){
-  const out=document.getElementById('plan-out');out.textContent='Planning your day…';out.classList.add('streaming');
+  const out=document.getElementById('plan-out');
+  if(out){out.style.display='block';out.textContent='Planning your day…';out.classList.add('streaming');}
   const r=await post('/api/plan-day',{tasks:S.tasks.filter(t=>!t.done).map(t=>({name:t.name,priority:t.prio})),appointments:S.apts.map(a=>({title:a.title,datetime:a.dt}))});
-  out.classList.remove('streaming');
-  out.textContent=r._e?`🌅 Here's your optimised day:\n\n08:30 — Deep work: Review project proposal (high priority)\n10:00 — Quick break + water 💧\n11:00 — Pay electricity bill (10 min)\n12:00 — Email triage\n13:00 — Lunch + 20-min walk 🚶\n15:00 — GP check-up appointment\n16:30 — Review Q3 financials\n17:30 — Wind down, prep tomorrow\n\nFocus on the high-priority items first thing — you've got this! 💪`:r.plan;
+  if(out){
+    out.classList.remove('streaming');
+    out.style.display='block';
+    out.textContent=r._e?`🌅 Here's your optimised day:\n\n08:30 — Deep work: Review project proposal (high priority)\n10:00 — Quick break + water 💧\n11:00 — Pay electricity bill (10 min)\n12:00 — Email triage\n13:00 — Lunch + 20-min walk 🚶\n15:00 — GP check-up appointment\n16:30 — Review Q3 financials\n17:30 — Wind down, prep tomorrow\n\nFocus on the high-priority items first thing — you've got this! 💪`:r.plan;
+    out.scrollIntoView({behavior:'smooth',block:'nearest'});
+  }
   toast('Day plan ready ✓');
 }
 
@@ -1510,6 +1530,7 @@ document.addEventListener('DOMContentLoaded',()=>{
       if (typeof showOnboardingIfNew === 'function') showOnboardingIfNew();
       if (typeof renderFinanceAll === 'function') { loadFinProfileFields(); renderFinanceAll(); }
       if (typeof refreshDashboardPro === 'function') refreshDashboardPro();
+      else if (typeof renderDailyBriefing === 'function') renderDailyBriefing();
       if (typeof updateProMeter === 'function') updateProMeter();
       if (typeof renderHealthStreak === 'function') renderHealthStreak();
     } catch (e) {

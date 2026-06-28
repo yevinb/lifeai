@@ -1,13 +1,16 @@
-const CACHE_NAME = 'lifeai-v5';
+const CACHE_NAME = 'lifeai-v6';
 const ASSETS = [
   '/index.html',
   '/dashboard.html',
   '/about.html',
   '/privacy.html',
   '/manifest.json',
+  '/css/lifeai-os.css',
   '/js/finance-pro.js',
   '/js/lifeai-pro.js',
   '/js/lifeai-modules.js',
+  '/js/lifeai-briefing.js',
+  '/js/lifeai-copilot.js',
 ];
 
 // Install
@@ -79,7 +82,7 @@ self.addEventListener('notificationclick', e => {
           return client.focus();
         }
       }
-      return clients.openWindow(url);
+      if (clients.openWindow) return clients.openWindow(url);
     })
   );
 });

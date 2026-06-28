@@ -116,11 +116,12 @@ function renderExpsPro() {
 }
 
 const LA_COMMANDS = [
-  { label: 'Dashboard', run: () => nav('dashboard', document.querySelector('.nav-b[onclick*="dashboard"]')) },
+  { label: 'Today', run: () => nav('dashboard', document.querySelector('.nav-b[onclick*="dashboard"]')) },
   { label: 'Tasks', run: () => nav('tasks', document.querySelector('.nav-b[onclick*="tasks"]')) },
   { label: 'Finance', run: () => nav('finance', document.getElementById('nav-finance')) },
   { label: 'AI Chat', run: () => nav('chat', document.querySelector('.nav-b[onclick*="chat"]')) },
   { label: 'Health', run: () => nav('health', document.querySelector('.nav-b[onclick*="health"]')) },
+  { label: 'AI briefing', run: () => { nav('dashboard', document.querySelector('.nav-b[onclick*="dashboard"]')); generateAIBriefing?.(); } },
   { label: 'Plan my day', run: () => planDay() },
   { label: 'Log expense', run: () => { nav('finance', document.getElementById('nav-finance')); switchFinTab('overview'); document.getElementById('ex-d')?.focus(); } }
 ];
@@ -196,6 +197,10 @@ function renderActBarsFromHealth() {
 }
 
 function refreshDashboardPro() {
+  if (typeof renderDailyBriefing === 'function') {
+    renderDailyBriefing();
+    return;
+  }
   renderDashboardTimeline();
   renderSmartInsights();
   if (typeof updateFinanceCardsPro === 'function') updateFinanceCardsPro();
@@ -220,8 +225,7 @@ function initLifeAIPro() {
   };
   const origRenderActBars = renderActBars;
   window.renderActBars = function() {
-    if (S.health?.steps > 0) renderActBarsFromHealth();
-    else origRenderActBars();
+    origRenderActBars();
   };
 }
 

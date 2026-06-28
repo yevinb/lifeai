@@ -1,7 +1,7 @@
 {
-  "name": "LifeAI — Personal Command Centre",
+  "name": "LifeAI — Life Operating System",
   "short_name": "LifeAI",
-  "description": "Your intelligent personal assistant for tasks, finance, health and AI chat.",
+  "description": "Your AI-first daily briefing for tasks, calendar, money, health, and decisions.",
   "start_url": "https://smartlifeai.co.uk/index.html",
   "scope": "https://smartlifeai.co.uk/",
   "display": "standalone",
