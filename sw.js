@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lifeai-v6';
+const CACHE_NAME = 'lifeai-v7';
 const ASSETS = [
   '/index.html',
   '/dashboard.html',
@@ -11,6 +11,9 @@ const ASSETS = [
   '/js/lifeai-modules.js',
   '/js/lifeai-briefing.js',
   '/js/lifeai-copilot.js',
+  '/js/lifeai-settings.js',
+  '/js/lifeai-onboarding.js',
+  '/js/lifeai-shell.js',
 ];
 
 // Install
@@ -31,23 +34,28 @@ self.addEventListener('activate', e => {
   self.clients.claim();
 });
 
-// Fetch
+// Fetch — network first for HTML/JS to get updates faster
 self.addEventListener('fetch', e => {
   if (!e.request.url.startsWith(self.location.origin)) return;
+  const isDoc = e.request.destination === 'document';
+  const isScript = e.request.destination === 'script';
+  const isStyle = e.request.destination === 'style';
+
+  if (isDoc || isScript || isStyle) {
+    e.respondWith(
+      fetch(e.request).then(response => {
+        const clone = response.clone();
+        caches.open(CACHE_NAME).then(cache => cache.put(e.request, clone));
+        return response;
+      }).catch(() => caches.match(e.request).then(c => c || caches.match('/index.html')))
+    );
+    return;
+  }
+
   e.respondWith(
     caches.match(e.request).then(cached => {
       if (cached) return cached;
-      return fetch(e.request).then(response => {
-        if (e.request.destination === 'document') {
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(e.request, clone));
-        }
-        return response;
-      }).catch(() => {
-        if (e.request.destination === 'document') {
-          return caches.match('/index.html');
-        }
-      });
+      return fetch(e.request);
     })
   );
 });
@@ -70,7 +78,6 @@ self.addEventListener('push', e => {
   e.waitUntil(self.registration.showNotification(title, options));
 });
 
-// Notification click
 self.addEventListener('notificationclick', e => {
   e.notification.close();
   if (e.action === 'dismiss') return;

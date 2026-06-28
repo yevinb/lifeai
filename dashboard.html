@@ -355,6 +355,11 @@ select option{background:var(--surface-3);}
 </head>
 <body>
 
+<div id="app-loading" class="on" aria-live="polite" aria-busy="true">
+  <div class="load-ring"></div>
+  <div class="load-msg">Loading your Life OS…</div>
+</div>
+
 <!-- INLINE SVG SPRITES -->
 <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
   <symbol id="i-dash" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.5"/></symbol>
@@ -423,6 +428,8 @@ select option{background:var(--surface-3);}
     <div class="s-sect">Insights</div>
     <div class="nav-b" id="nav-finance" onclick="nav('finance',this)"><span class="nav-ic"><svg width="16" height="16"><use href="#i-fin"/></svg></span>Finance</div>
     <div class="nav-b" onclick="nav('health',this)"><span class="nav-ic"><svg width="16" height="16"><use href="#i-health"/></svg></span>Health</div>
+    <div class="s-sect">Account</div>
+    <div class="nav-b" id="nav-settings" onclick="nav('settings',this);loadSettingsForm()"><span class="nav-ic"><svg width="16" height="16"><use href="#i-dash"/></svg></span>Settings</div>
     <div class="sf">
       <div class="sf-l">Today's Progress</div>
       <div class="sf-r"><span class="sf-n">Tasks</span><div class="sf-bw"><div class="sf-bf" id="sf-t" style="width:0%"></div></div><span class="sf-v" id="sf-tv">0/0</span></div>
@@ -504,6 +511,18 @@ select option{background:var(--surface-3);}
     </div>
   </div>
 
+  <!-- ONBOARDING WIZARD -->
+  <div id="onboard-wizard" role="dialog" aria-modal="true" aria-labelledby="onboard-title">
+    <div class="onboard-box">
+      <div id="onboard-body"></div>
+      <div class="onboard-dots" id="onboard-dots"></div>
+      <div class="onboard-foot">
+        <button type="button" class="btn btn-out" id="onboard-back" onclick="onboardBack()">Back</button>
+        <button type="button" class="btn btn-gold" id="onboard-next" onclick="onboardNext()">Continue</button>
+      </div>
+    </div>
+  </div>
+
   <!-- MAIN -->
   <main class="main">
 
@@ -553,9 +572,10 @@ select option{background:var(--surface-3);}
 
     <!-- ═══ TASKS ═══ -->
     <div class="panel" id="panel-tasks">
-      <div class="ph"><div><div class="ph-eye">Task Management</div><h1 class="ph-h">Your <em>Tasks</em></h1><p class="ph-sub">Track, prioritise, and complete your to-dos</p></div>
+      <div class="ph"><div><div class="ph-eye">Task Management</div><h1 class="ph-h">Your <em>Tasks</em></h1><p class="ph-sub">AI-ranked priorities — not just a list</p></div>
         <button class="btn btn-out" onclick="clearDoneTasks()">Clear done</button>
       </div>
+      <div class="ai-inline" id="tasks-ai-hint"><strong>Tip:</strong> High-priority tasks with due dates appear first in your daily briefing.</div>
       <div class="fin-tabs" id="task-tabs">
         <button type="button" class="fin-tab on" data-tf="active" onclick="setTaskFilter('active')">Active</button>
         <button type="button" class="fin-tab" data-tf="done" onclick="setTaskFilter('done')">Done</button>
@@ -655,9 +675,10 @@ select option{background:var(--surface-3);}
 
     <!-- ═══ FINANCE ═══ -->
     <div class="panel" id="panel-finance">
-      <div class="ph"><div><div class="ph-eye">Financial Command Centre</div><h1 class="ph-h">Finance <em>Intelligence</em></h1><p class="ph-sub">Expenses, subscriptions, goals, and 30-day cash flow</p></div>
+      <div class="ph"><div><div class="ph-eye">Financial Command Centre</div><h1 class="ph-h">Finance <em>Intelligence</em></h1><p class="ph-sub">Decisions, not dashboards — cancel subs, hit goals, forecast cash</p></div>
         <button class="btn btn-out" onclick="seedFinanceDemo();renderFinanceAll();if(window.saveToFirestore)saveToFirestore();toast('Sample finance data loaded','ok')">Load sample</button>
       </div>
+      <div class="ai-inline"><strong>AI:</strong> Mark unused subscriptions — LifeAI calculates your potential savings automatically.</div>
       <div id="fin-weekly-wrap"></div>
       <div class="fin-tabs">
         <button type="button" class="fin-tab on" data-fin="overview" onclick="switchFinTab('overview')">Overview</button>
@@ -799,6 +820,53 @@ select option{background:var(--surface-3);}
       </div>
     </div>
 
+    <!-- ═══ SETTINGS ═══ -->
+    <div class="panel" id="panel-settings">
+      <div class="ph">
+        <div><div class="ph-eye">Account</div><h1 class="ph-h"><em>Settings</em></h1><p class="ph-sub">Profile, preferences, and your data</p></div>
+        <span class="set-plan-badge" id="set-plan-badge">Free plan</span>
+      </div>
+      <div class="settings-grid stag">
+        <div class="card settings-section">
+          <div class="c-eye">Profile</div>
+          <div class="fld" style="margin-bottom:11px"><label>Display name</label><input id="set-name" placeholder="Your name"></div>
+          <div class="fld" style="margin-bottom:11px"><label>Email</label><input id="set-email" disabled style="opacity:.6"></div>
+          <div class="fld" style="margin-bottom:11px"><label>Timezone</label>
+            <select id="set-timezone">
+              <option value="Europe/London">London (GMT/BST)</option>
+              <option value="Europe/Dublin">Dublin</option>
+              <option value="America/New_York">New York</option>
+              <option value="America/Los_Angeles">Los Angeles</option>
+              <option value="Asia/Dubai">Dubai</option>
+              <option value="Asia/Singapore">Singapore</option>
+            </select>
+          </div>
+        </div>
+        <div class="card settings-section">
+          <div class="c-eye">Finance defaults</div>
+          <div class="fld" style="margin-bottom:11px"><label>Monthly income (£)</label><input id="set-income" type="number" placeholder="3200"></div>
+          <div class="fld"><label>Monthly budget (£)</label><input id="set-budget" type="number" placeholder="2400"></div>
+        </div>
+        <div class="card settings-section">
+          <div class="c-eye">Preferences</div>
+          <label class="toggle-row"><input type="checkbox" id="set-morning-brief" checked> AI morning briefing on Today</label>
+          <label class="toggle-row"><input type="checkbox" id="set-notifications" checked> Push notifications</label>
+          <label class="toggle-row"><input type="checkbox" id="set-week-monday" checked> Week starts Monday</label>
+          <button type="button" class="btn btn-gold" style="width:100%;margin-top:14px" onclick="saveSettings()">Save settings</button>
+        </div>
+        <div class="card settings-section">
+          <div class="c-eye">Data &amp; account</div>
+          <p style="font-size:.78rem;color:var(--text-2);line-height:1.6;margin-bottom:14px">Export your Life OS data or manage your plan.</p>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <button type="button" class="btn btn-out" onclick="exportUserData()">Export JSON</button>
+            <button type="button" class="btn btn-out" onclick="clearAllLocalData()">Reset local prefs</button>
+            <button type="button" class="btn btn-out" onclick="showUpgradeModal()">Upgrade to Pro</button>
+            <button type="button" class="btn btn-out" style="color:var(--danger);border-color:rgba(248,113,113,.25)" onclick="logout()">Sign out</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </main>
 </div>
 <div id="toasts"></div>
@@ -815,6 +883,9 @@ select option{background:var(--surface-3);}
 <script src="js/lifeai-modules.js"></script>
 <script src="js/lifeai-briefing.js"></script>
 <script src="js/lifeai-copilot.js"></script>
+<script src="js/lifeai-settings.js"></script>
+<script src="js/lifeai-onboarding.js"></script>
+<script src="js/lifeai-shell.js"></script>
 
 <script>
 // ═══════ CONFIG ═══════
@@ -837,9 +908,17 @@ const S = {
   drafts: [],
   subs: [],
   goals: [],
-  profile: { monthlyIncome: 0, cashBalance: 0, monthlyBudget: 2400 },
+  profile: { monthlyIncome: 0, cashBalance: 0, monthlyBudget: 2400, displayName: '' },
   assets: [],
-  liabilities: []
+  liabilities: [],
+  settings: {
+    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'Europe/London',
+    morningBrief: true,
+    notifications: true,
+    weekStartsMonday: true,
+    currency: 'GBP',
+    onboarded: false
+  }
 };
 
 // ═══════ CLOCK ═══════
@@ -1426,6 +1505,8 @@ function qs(t){ document.getElementById('cinput').value=t; sendChat(); }
 
 // ═══════ INIT ═══════
 document.addEventListener('DOMContentLoaded',()=>{
+  // Hide loading if auth takes too long (fallback)
+  setTimeout(() => hideAppLoading?.(), 4000);
   renderTasks();renderApts();renderEmails();renderExps();renderRems();renderActBars();renderDrafts();
   if(typeof renderFinanceAll==='function'){loadFinProfileFields();renderFinanceAll();}
   // Send daily task reminder notification
@@ -1491,6 +1572,7 @@ document.addEventListener('DOMContentLoaded',()=>{
         profile: S.profile,
         assets: S.assets,
         liabilities: S.liabilities,
+        settings: S.settings,
         hist: S.hist.slice(-20),
         fitnessHistory: S.fitnessHistory.slice(-14),
         updatedAt: new Date().toISOString()
@@ -1515,6 +1597,7 @@ document.addEventListener('DOMContentLoaded',()=>{
         if (data.subs) S.subs = data.subs;
         if (data.goals) S.goals = data.goals;
         if (data.profile) S.profile = { ...S.profile, ...data.profile };
+        if (data.settings) S.settings = { ...S.settings, ...data.settings };
         if (data.assets) S.assets = data.assets;
         if (data.liabilities) S.liabilities = data.liabilities;
         if (data.hist) S.hist = data.hist;
@@ -1527,14 +1610,17 @@ document.addEventListener('DOMContentLoaded',()=>{
       updateHealthDisplay();
       renderActBars();
       if (typeof restoreChatFromHistory === 'function') restoreChatFromHistory();
-      if (typeof showOnboardingIfNew === 'function') showOnboardingIfNew();
       if (typeof renderFinanceAll === 'function') { loadFinProfileFields(); renderFinanceAll(); }
       if (typeof refreshDashboardPro === 'function') refreshDashboardPro();
       else if (typeof renderDailyBriefing === 'function') renderDailyBriefing();
       if (typeof updateProMeter === 'function') updateProMeter();
       if (typeof renderHealthStreak === 'function') renderHealthStreak();
+      if (typeof loadSettingsForm === 'function') loadSettingsForm();
+      if (typeof hideAppLoading === 'function') hideAppLoading();
+      if (typeof showOnboardingIfNew === 'function') showOnboardingIfNew();
     } catch (e) {
       console.error('Load error:', e);
+      if (typeof hideAppLoading === 'function') hideAppLoading();
     }
   }
 

@@ -121,6 +121,7 @@ const LA_COMMANDS = [
   { label: 'Finance', run: () => nav('finance', document.getElementById('nav-finance')) },
   { label: 'AI Chat', run: () => nav('chat', document.querySelector('.nav-b[onclick*="chat"]')) },
   { label: 'Health', run: () => nav('health', document.querySelector('.nav-b[onclick*="health"]')) },
+  { label: 'Settings', run: () => openSettings?.() || nav('settings', document.getElementById('nav-settings')) },
   { label: 'AI briefing', run: () => { nav('dashboard', document.querySelector('.nav-b[onclick*="dashboard"]')); generateAIBriefing?.(); } },
   { label: 'Plan my day', run: () => planDay() },
   { label: 'Log expense', run: () => { nav('finance', document.getElementById('nav-finance')); switchFinTab('overview'); document.getElementById('ex-d')?.focus(); } }

@@ -44,7 +44,18 @@ function getCopilotAdvice(panelId) {
       primary: { label: 'Generate draft', run: () => document.getElementById('e-pts')?.focus() },
       secondary: null
     }),
-    chat: () => null,
+    chat: () => ({
+      title: 'Conversation Copilot',
+      text: 'Ask about your day, money, health, or tasks — I have context from your Life OS data when relevant.',
+      primary: { label: 'Daily briefing', run: () => qs('Give me a concise briefing of my day') },
+      secondary: { label: 'Priorities', run: () => qs('What should I focus on right now?') }
+    }),
+    settings: () => ({
+      title: 'Settings',
+      text: 'Manage your profile, notification preferences, and export your data anytime.',
+      primary: { label: 'Save settings', run: () => saveSettings() },
+      secondary: { label: 'Export data', run: () => exportUserData() }
+    }),
     finance: () => ({
       title: 'Finance Copilot',
       text: unused
@@ -112,12 +123,9 @@ function renderCopilot(panelId) {
 }
 
 function initCopilot() {
-  const origNav = window.nav;
-  window.nav = function(id, el) {
-    origNav(id, el);
-    renderCopilot(id);
-  };
   renderCopilot('dashboard');
 }
 
-document.addEventListener('DOMContentLoaded', () => setTimeout(initCopilot, 250));
+document.addEventListener('DOMContentLoaded', () => setTimeout(initCopilot, 300));
+
+window.renderCopilot = renderCopilot;
