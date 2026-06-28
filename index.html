@@ -108,6 +108,7 @@
     @media(max-width:1024px){.hero-title{font-size:3rem;}.features-grid{grid-template-columns:repeat(2,1fr);}}
     @media(max-width:768px){.hero{grid-template-columns:1fr;text-align:center;}.hero-subtitle{margin-left:auto;margin-right:auto;}.hero-stats{justify-content:center;}.nav-links{display:none;}.features-grid{grid-template-columns:1fr;}}
   </style>
+  <script src="js/la-cache-kill.js"></script>
 </head>
 <body class="la-v2">
 
@@ -284,7 +285,7 @@
     // Already logged in → go to dashboard
     onAuthStateChanged(auth, user => {
       if (user) {
-        window.location.href = 'dashboard.html';
+        window.location.href = 'dashboard.html?fresh=1';
       }
     });
 
@@ -316,7 +317,7 @@
         uid: user.uid
       }));
       document.getElementById('loading').classList.add('active');
-      window.location.href = 'dashboard.html';
+      window.location.href = 'dashboard.html?fresh=1';
     }
 
     window.handleLogin = async () => {
