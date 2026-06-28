@@ -9,7 +9,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="LifeAI">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LifeAI — Your Intelligent Personal Assistant</title>
+  <title>LifeAI — Life Operating System</title>
+  <link rel="stylesheet" href="css/lifeai-premium.css?v=2.0">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Outfit:wght@300;400;500;600&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
@@ -108,7 +109,7 @@
     @media(max-width:768px){.hero{grid-template-columns:1fr;text-align:center;}.hero-subtitle{margin-left:auto;margin-right:auto;}.hero-stats{justify-content:center;}.nav-links{display:none;}.features-grid{grid-template-columns:1fr;}}
   </style>
 </head>
-<body>
+<body class="la-v2">
 
   <div class="loading-screen" id="loading">
     <div class="spinner"></div>
@@ -181,9 +182,9 @@
   <main class="container">
     <section class="hero">
       <div>
-        <div class="hero-badge"><div class="pip gold"></div><span>LIFE OS · AI-FIRST</span></div>
-        <h1 class="hero-title">Your daily <em>briefing</em> for work, money, and wellbeing</h1>
-        <p class="hero-subtitle">LifeAI isn't another dashboard. It's a proactive Life Operating System — priorities, calendar, finances, and health unified with AI that tells you what to do next.</p>
+        <div class="hero-badge"><div class="pip gold"></div><span>LIFE OS 2.0 · NOW LIVE</span></div>
+        <h1 class="hero-title">The app that tells you <em>what to do</em> — not just what happened</h1>
+        <p class="hero-subtitle">Life OS 2.0: daily briefing, AI copilot on every screen, priority task board, and finance decisions first. Built to open every morning.</p>
         <div style="display:flex;gap:16px;">
           <button class="btn btn-gold" onclick="openModal();switchToSignup()">Get Started Free</button>
           <button class="btn btn-out" onclick="document.querySelector('.features-grid')?.scrollIntoView({behavior:'smooth'})">See how it works</button>
