@@ -270,6 +270,22 @@ select option{background:var(--surface-3);}
 .la-cmd-item kbd{font-size:.68rem;font-family:var(--mono);color:var(--text-3);}
 .cmd-hint{font-family:var(--mono);font-size:.68rem;color:var(--text-3);padding:4px 10px;border:1px solid var(--border);border-radius:4px;cursor:pointer;}
 .cmd-hint:hover{border-color:var(--gold);color:var(--gold);}
+.empty-state{font-size:.82rem;color:var(--text-3);padding:16px 0;line-height:1.5;}
+.t-due{font-size:.62rem;font-family:var(--mono);color:var(--text-3);margin-left:6px;white-space:nowrap;}
+.t-due.soon{color:var(--gold);}
+.streak-bar{height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin-bottom:6px;}
+.streak-fill{height:100%;background:linear-gradient(90deg,var(--gold-d),var(--gold));border-radius:2px;transition:width .4s var(--ease);}
+.onboard-banner{display:none;margin-bottom:18px;padding:14px 18px;background:var(--gold-g);border:1px solid rgba(201,168,76,.25);border-radius:var(--rm);font-size:.82rem;color:var(--text-2);line-height:1.55;}
+.onboard-banner.on{display:flex;gap:14px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;}
+.onboard-banner strong{color:var(--gold);font-weight:500;}
+.onboard-banner .btn{font-size:.72rem;padding:6px 12px;}
+.mob-menu{display:none;background:transparent;border:1px solid var(--border);border-radius:var(--r);color:var(--text-2);padding:6px 10px;cursor:pointer;font-size:1rem;}
+.streak-bar{height:4px;background:var(--surface-3);border-radius:2px;overflow:hidden;margin-bottom:8px;}
+.streak-fill{height:100%;background:linear-gradient(90deg,var(--gold-d),var(--em));border-radius:2px;transition:width .6s;}
+#pro-meter{font-size:.62rem;font-family:var(--mono);color:var(--text-3);padding:8px 10px 0;line-height:1.5;}
+#health-streak{font-size:.75rem;color:var(--text-2);margin-bottom:16px;}
+.sidebar-overlay{display:none;position:fixed;inset:0;top:62px;background:rgba(0,0,0,.55);z-index:199;}
+.sidebar-overlay.on{display:block;}
 
 /* AI OUTPUT */
 .aiout{background:var(--surface-2);border:1px solid rgba(201,168,76,.14);border-radius:var(--rm);padding:14px 16px;font-size:.83rem;line-height:1.75;color:var(--text-2);white-space:pre-wrap;font-family:var(--body);position:relative;}
@@ -323,12 +339,15 @@ select option{background:var(--surface-3);}
 
 @media(max-width:860px){
   .shell{grid-template-columns:1fr;}
-  .sidebar{display:none;}
+  .mob-menu{display:inline-flex;align-items:center;justify-content:center;}
+  .sidebar{display:flex;flex-direction:column;position:fixed;left:-280px;top:62px;bottom:0;width:256px;z-index:200;transition:left .25s var(--ease);overflow-y:auto;background:var(--void);}
+  .sidebar.open{left:0;box-shadow:8px 0 40px rgba(0,0,0,.6);}
   .panel{padding:22px 16px 44px;gap:18px;}
   .g2,.g3,.g4{grid-template-columns:1fr;}
   .ph-h{font-size:1.9rem;}
   .chat-body{padding:18px 16px;}
   .chat-ft{padding:10px 16px 16px;}
+  .insight-row{grid-template-columns:1fr;}
 }
 </style>
 </head>
@@ -356,6 +375,7 @@ select option{background:var(--surface-3);}
 </svg>
 
 <div class="shell">
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
   <!-- TOPBAR -->
   <header class="topbar">
@@ -376,6 +396,7 @@ select option{background:var(--surface-3);}
       <div class="pill"><div class="pip g"></div><span id="tdate">—</span></div>
     </div>
     <div class="top-r">
+      <button type="button" class="mob-menu" id="mob-menu" aria-label="Menu">☰</button>
       <span class="cmd-hint" id="la-cmd-btn" title="Command palette">⌘K</span>
       <span id="tclock">—</span>
       <div class="av" onclick="toggleLogout()">
@@ -405,6 +426,7 @@ select option{background:var(--surface-3);}
       <div class="sf-r"><span class="sf-n">Tasks</span><div class="sf-bw"><div class="sf-bf" id="sf-t" style="width:0%"></div></div><span class="sf-v" id="sf-tv">0/0</span></div>
       <div class="sf-r"><span class="sf-n">Steps</span><div class="sf-bw"><div class="sf-bf" style="width:0%;background:var(--em)"></div></div><span class="sf-v">0%</span></div>
       <div class="sf-r"><span class="sf-n">Water</span><div class="sf-bw"><div class="sf-bf" style="width:0%;background:var(--info)"></div></div><span class="sf-v">0L</span></div>
+      <div id="pro-meter"></div>
     </div>
 
     <!-- SUBSCRIPTION PLANS -->
@@ -485,6 +507,10 @@ select option{background:var(--surface-3);}
 
     <!-- ═══ DASHBOARD ═══ -->
     <div class="panel on" id="panel-dashboard">
+      <div class="onboard-banner" id="onboard-banner">
+        <div><strong>New here?</strong> Add a task, try <em style="color:var(--gold);font-style:italic">Plan My Day</em>, or open Finance → Load sample. Press <span style="font-family:var(--mono);color:var(--gold)">⌘K</span> to jump anywhere.</div>
+        <button type="button" class="btn btn-out" onclick="dismissOnboarding()">Got it</button>
+      </div>
       <div class="ph">
         <div><div class="ph-eye">Command Centre</div><h1 class="ph-h" id="dash-greeting">Good <em>morning</em></h1><p class="ph-sub" id="ph-date">Loading…</p></div>
         <button class="btn btn-gold" onclick="planDay()"><svg width="13" height="13"><use href="#i-spark"/></svg>Plan My Day</button>
@@ -514,11 +540,19 @@ select option{background:var(--surface-3);}
 
     <!-- ═══ TASKS ═══ -->
     <div class="panel" id="panel-tasks">
-      <div class="ph"><div><div class="ph-eye">Task Management</div><h1 class="ph-h">Your <em>Tasks</em></h1><p class="ph-sub">Track, prioritise, and complete your to-dos</p></div></div>
+      <div class="ph"><div><div class="ph-eye">Task Management</div><h1 class="ph-h">Your <em>Tasks</em></h1><p class="ph-sub">Track, prioritise, and complete your to-dos</p></div>
+        <button class="btn btn-out" onclick="clearDoneTasks()">Clear done</button>
+      </div>
+      <div class="fin-tabs" id="task-tabs">
+        <button type="button" class="fin-tab on" data-tf="active" onclick="setTaskFilter('active')">Active</button>
+        <button type="button" class="fin-tab" data-tf="done" onclick="setTaskFilter('done')">Done</button>
+        <button type="button" class="fin-tab" data-tf="all" onclick="setTaskFilter('all')">All</button>
+      </div>
       <div class="card"><div class="c-eye">Add New</div>
         <div style="display:flex;gap:11px;align-items:flex-end;flex-wrap:wrap;">
           <div class="fld" style="flex:3;min-width:190px;"><label>Task Description</label><input id="t-name" placeholder="What needs to be done?"></div>
           <div class="fld" style="flex:1;min-width:120px;"><label>Priority</label><select id="t-prio"><option value="high">🔴 High</option><option value="medium" selected>🟡 Medium</option><option value="low">🔵 Low</option></select></div>
+          <div class="fld" style="flex:1;min-width:140px;"><label>Due (optional)</label><input id="t-due" type="date"></div>
           <button class="btn btn-gold" onclick="addTask()"><svg width="13" height="13"><use href="#i-plus"/></svg>Add Task</button>
         </div>
       </div>
@@ -545,7 +579,9 @@ select option{background:var(--surface-3);}
 
     <!-- ═══ EMAIL ═══ -->
     <div class="panel" id="panel-email">
-      <div class="ph"><div><div class="ph-eye">AI Email Drafter</div><h1 class="ph-h">Draft <em>Emails</em></h1><p class="ph-sub">Generate professional emails in seconds with AI</p></div></div>
+      <div class="ph"><div><div class="ph-eye">AI Email Drafter</div><h1 class="ph-h">Draft <em>Emails</em></h1><p class="ph-sub">Generate professional emails in seconds with AI</p></div>
+        <button class="btn btn-out" onclick="copyEmailDraft()">Copy draft</button>
+      </div>
       <div class="g2">
         <div class="card">
           <div class="c-eye">AI Email Drafter</div>
@@ -570,6 +606,10 @@ select option{background:var(--surface-3);}
 
     <!-- ═══ CHAT ═══ -->
     <div class="panel" id="panel-chat">
+      <div class="ph" style="padding:18px 38px 0;margin:0;border:none">
+        <div><div class="ph-eye">Intelligence</div><h1 class="ph-h" style="font-size:1.5rem">AI <em>Chat</em></h1></div>
+        <button class="btn btn-out" onclick="clearChatHistory()" style="font-size:.75rem">Clear chat</button>
+      </div>
       <div class="chat-body" id="chat-msgs">
         <div class="cm ai">
           <div class="m-av">AI</div>
@@ -698,6 +738,7 @@ select option{background:var(--surface-3);}
     <!-- ═══ HEALTH ═══ -->
     <div class="panel" id="panel-health">
       <div class="ph"><div><div class="ph-eye">Wellbeing</div><h1 class="ph-h">Health <em>Centre</em></h1><p class="ph-sub">Click any ring to log today's data</p></div></div>
+      <div id="health-streak"></div>
       <div class="g4 stag">
         <div class="rc" onclick="openHealthLog('steps')" style="cursor:pointer;" title="Click to log steps">
           <div class="rw"><svg class="rs" width="88" height="88" viewBox="0 0 88 88"><circle class="rbg" cx="44" cy="44" r="38"/><circle class="rp" id="r-st" cx="44" cy="44" r="38" stroke="var(--gold)"/></svg><div class="rl2"><span class="rv" id="rv-steps" style="color:var(--gold)">0</span><span class="ru">steps</span></div></div>
@@ -758,6 +799,7 @@ select option{background:var(--surface-3);}
 
 <script src="js/finance-pro.js"></script>
 <script src="js/lifeai-pro.js"></script>
+<script src="js/lifeai-modules.js"></script>
 
 <script>
 // ═══════ CONFIG ═══════
@@ -910,9 +952,12 @@ function delT(id){S.tasks=S.tasks.filter(x=>x.id!==id);renderTasks();toast('Task
 function addTask(){
   if(!checkLimit('tasks')) return;
   const n=document.getElementById('t-name').value.trim(),p=document.getElementById('t-prio').value;
+  const due=document.getElementById('t-due')?.value||'';
   if(!n){toast('Enter a task name','er');return;}
-  S.tasks.unshift({id:Date.now(),name:n,prio:p,done:false});
-  document.getElementById('t-name').value='';renderTasks();toast('Task added ✓');
+  S.tasks.unshift({id:Date.now(),name:n,prio:p,done:false,due});
+  document.getElementById('t-name').value='';
+  if(document.getElementById('t-due')) document.getElementById('t-due').value='';
+  renderTasks();toast('Task added ✓');
   if(window.saveToFirestore) saveToFirestore();
 }
 
@@ -1261,6 +1306,7 @@ function saveHealthLog(){
   const val = parseFloat(document.getElementById('health-log-val').value);
   if(isNaN(val)||val<0){toast('Please enter a valid number','er');return;}
   S.health[currentHealthMetric] = val;
+  if(typeof recordDailyHealthScore==='function') recordDailyHealthScore();
   updateHealthDisplay();
   document.getElementById('health-log-card').style.display='none';
   toast('Health data updated ✓');
@@ -1287,11 +1333,13 @@ function addRem(){
 function renderActBars(){
   const el=document.getElementById('act-bars'),ll=document.getElementById('act-lbls');
   if(!el)return;
-  const data=[72,55,88,64,91,45,62],days=['MON','TUE','WED','THU','FRI','SAT','SUN'];
+  const data = typeof getWeeklyActivity === 'function' ? getWeeklyActivity() : [0,0,0,0,0,0,0];
+  const days=['MON','TUE','WED','THU','FRI','SAT','SUN'];
+  const todayIdx = (new Date().getDay() + 6) % 7;
   el.innerHTML='';ll.innerHTML='';
   data.forEach((v,i)=>{
-    const b=document.createElement('div');b.className='act-bar'+(i===6?' today':'');b.style.height='3px';el.appendChild(b);
-    setTimeout(()=>{b.style.height=Math.round(v/100*56)+'px';},280+i*55);
+    const b=document.createElement('div');b.className='act-bar'+(i===todayIdx?' today':'');b.style.height='3px';el.appendChild(b);
+    setTimeout(()=>{b.style.height=Math.round(Math.max(v,4)/100*56)+'px';},280+i*55);
     const l=document.createElement('span');l.className='act-lbl';l.textContent=days[i];ll.appendChild(l);
   });
 }
@@ -1322,6 +1370,7 @@ async function sendChat(){
   inp.value='';
   inp.style.height='auto';
   appendMsg('user',txt);
+  S.hist.push({ role: 'user', content: txt });
   const hasFitnessContext = isFitnessQuery(txt);
   let messageToSend = txt;
   if (hasFitnessContext) {
@@ -1341,6 +1390,8 @@ async function sendChat(){
   const rep = r._e ? `I can't reach the server right now. (Error: ${r.m})` : r.reply;
   appendMsg('ai', rep);
   S.hist.push({ role: 'assistant', content: rep });
+  if (window.saveToFirestore) saveToFirestore();
+  updateProMeter?.();
   // Track daily chat count for free users
   if (!isPro) {
     todayChatCount++;
@@ -1420,6 +1471,8 @@ document.addEventListener('DOMContentLoaded',()=>{
         profile: S.profile,
         assets: S.assets,
         liabilities: S.liabilities,
+        hist: S.hist.slice(-20),
+        fitnessHistory: S.fitnessHistory.slice(-14),
         updatedAt: new Date().toISOString()
       });
     } catch (e) {
@@ -1444,14 +1497,21 @@ document.addEventListener('DOMContentLoaded',()=>{
         if (data.profile) S.profile = { ...S.profile, ...data.profile };
         if (data.assets) S.assets = data.assets;
         if (data.liabilities) S.liabilities = data.liabilities;
+        if (data.hist) S.hist = data.hist;
+        if (data.fitnessHistory) S.fitnessHistory = data.fitnessHistory;
         if (data.pro)    updatePlanUI(true);
       }
       // Re-render everything with loaded data
       renderTasks(); renderApts(); renderEmails(); renderExps(); renderRems();
       renderDrafts();
       updateHealthDisplay();
+      renderActBars();
+      if (typeof restoreChatFromHistory === 'function') restoreChatFromHistory();
+      if (typeof showOnboardingIfNew === 'function') showOnboardingIfNew();
       if (typeof renderFinanceAll === 'function') { loadFinProfileFields(); renderFinanceAll(); }
       if (typeof refreshDashboardPro === 'function') refreshDashboardPro();
+      if (typeof updateProMeter === 'function') updateProMeter();
+      if (typeof renderHealthStreak === 'function') renderHealthStreak();
     } catch (e) {
       console.error('Load error:', e);
     }
